@@ -1,13 +1,13 @@
 package helpers_test
 
 import (
+	"github.com/ShatteredRealms/Web/pkg/helpers"
 	"net/http"
 	"net/http/httptest"
 
 	"github.com/gin-gonic/gin"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-	"github.com/productivestudy/auth/tests/helpers"
 )
 
 var _ = Describe("Requests", func() {
