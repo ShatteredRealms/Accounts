@@ -22,7 +22,7 @@ func CORSMiddleWare() gin.HandlerFunc {
 		c.Writer.Header().Set("Access-Control-Expose-Headers", "Content-Length")
 		c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
 
-		if c.Request.Method == "OPTIONS" {
+		if c.Request.Method == http.MethodOptions {
 			c.AbortWithStatus(http.StatusNoContent)
 			// c.AbortWithStatus(http.StatusOK)
 		} else {
