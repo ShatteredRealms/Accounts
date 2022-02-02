@@ -1,4 +1,4 @@
-module github.com/ShatteredRealms/Web
+module github.com/ShatteredRealms/Accounts
 
 go 1.17
 

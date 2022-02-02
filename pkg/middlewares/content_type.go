@@ -1,7 +1,7 @@
 package middlewares
 
 import (
-	"github.com/ShatteredRealms/Web/pkg/model"
+	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"net/http"
 
 	"github.com/gin-gonic/gin"

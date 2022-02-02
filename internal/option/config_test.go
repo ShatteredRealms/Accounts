@@ -2,7 +2,7 @@ package option_test
 
 import (
 	"fmt"
-	"github.com/ShatteredRealms/Web/internal/option"
+	"github.com/ShatteredRealms/Accounts/internal/option"
 	"github.com/productivestudy/auth/tests/helpers"
 	"os"
 	"reflect"

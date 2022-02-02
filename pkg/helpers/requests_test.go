@@ -1,7 +1,7 @@
 package helpers_test
 
 import (
-	"github.com/ShatteredRealms/Web/pkg/helpers"
+	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"net/http"
 	"net/http/httptest"
 

@@ -2,7 +2,7 @@ package middlewares
 
 import (
 	"fmt"
-	"github.com/ShatteredRealms/Web/pkg/helpers"
+	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"net/http"
 	"net/http/httptest"
 

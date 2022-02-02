@@ -32,7 +32,7 @@ BASE_APP_DIR = $(realpath $(ROOT_DIR)/cmd)
 BIN_DIR = $(realpath $(ROOT_DIR)/bin)
 
 # Entrypoint for applications
-APP_MAIN = $(BASE_APP_DIR)/web/main.go
+APP_MAIN = $(BASE_APP_DIR)/accounts/main.go
 
 #   _____                    _
 #  |_   _|                  | |
@@ -44,7 +44,7 @@ APP_MAIN = $(BASE_APP_DIR)/web/main.go
 #                 |___/
 
 build:
-	go build -o $(BIN_DIR)/web $(APP_MAIN)
+	go build -o $(BIN_DIR)/accounts $(APP_MAIN)
 
 test:
-	ginkgo $(ROOT_DIR)/... -covermode atomic --randomize-all
+	ginkgo $(ROOT_DIR)/... -covermode atomic

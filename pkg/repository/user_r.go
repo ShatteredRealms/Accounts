@@ -2,7 +2,7 @@ package repository
 
 import (
 	"fmt"
-	"github.com/ShatteredRealms/Web/pkg/model"
+	"github.com/ShatteredRealms/Accounts/pkg/model"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

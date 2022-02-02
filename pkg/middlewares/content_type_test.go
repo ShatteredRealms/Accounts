@@ -1,8 +1,8 @@
 package middlewares_test
 
 import (
-	"github.com/ShatteredRealms/Web/pkg/helpers"
-	"github.com/ShatteredRealms/Web/pkg/middlewares"
+	"github.com/ShatteredRealms/Accounts/pkg/helpers"
+	"github.com/ShatteredRealms/Accounts/pkg/middlewares"
 	"net/http"
 	"net/http/httptest"
 
