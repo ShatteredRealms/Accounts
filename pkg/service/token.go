@@ -2,11 +2,11 @@ package service
 
 import (
 	"fmt"
+	"github.com/ShatteredRealms/Accounts/internal/option"
 	"io/ioutil"
 	"time"
 
 	"github.com/golang-jwt/jwt"
-	"github.com/productivestudy/auth/cmd/auth/option"
 )
 
 type JWTService interface {
@@ -56,7 +56,7 @@ func (j jwtService) Create(ttl time.Duration, additionalClaims jwt.MapClaims) (s
 	claims["exp"] = now.Add(ttl).Unix()
 	claims["iat"] = now.Unix()
 	claims["nbf"] = now.Unix()
-	claims["iss"] = "auth.productivestudy.com"
+	claims["iss"] = "auth.shatteredrealmsonline.com"
 
 	for k, v := range additionalClaims {
 		if claims[k] != nil {

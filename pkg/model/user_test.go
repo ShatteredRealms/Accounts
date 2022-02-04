@@ -2,13 +2,12 @@ package model_test
 
 import (
 	"fmt"
+	"github.com/ShatteredRealms/Accounts/pkg/helpers"
+	"github.com/ShatteredRealms/Accounts/pkg/model"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"golang.org/x/crypto/bcrypt"
-
-	"github.com/productivestudy/auth/pkg/model"
-	"github.com/productivestudy/auth/tests/helpers"
 )
 
 var _ = Describe("User", func() {

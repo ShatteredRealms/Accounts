@@ -1,8 +1,8 @@
 package service
 
 import (
-	"github.com/productivestudy/auth/pkg/model"
-	"github.com/productivestudy/auth/pkg/repository"
+	"github.com/ShatteredRealms/Accounts/pkg/model"
+	"github.com/ShatteredRealms/Accounts/pkg/repository"
 	"gorm.io/gorm"
 )
 

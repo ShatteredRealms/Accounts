@@ -1,5 +1,5 @@
 host: localhost
 port: 3306
-name: productivestudy
-user: productivestudy
-pass: productivestudy
+name: shatteredrealmsonline
+user: shatteredrealmsonline
+pass: shatteredrealmsonline

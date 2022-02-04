@@ -2,15 +2,14 @@ package model_test
 
 import (
 	"fmt"
+	"github.com/ShatteredRealms/Accounts/pkg/helpers"
+	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"net/http"
 	"net/url"
 
 	"github.com/gin-gonic/gin"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/productivestudy/auth/pkg/model"
-	"github.com/productivestudy/auth/tests/helpers"
 )
 
 var _ = Describe("ResponseModel", func() {

@@ -3,6 +3,9 @@ package service_test
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/ShatteredRealms/Accounts/internal/option"
+	"github.com/ShatteredRealms/Accounts/pkg/helpers"
+	"github.com/ShatteredRealms/Accounts/pkg/service"
 	"io/fs"
 	"reflect"
 	"syscall"
@@ -11,10 +14,6 @@ import (
 	"github.com/golang-jwt/jwt"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/productivestudy/auth/cmd/auth/option"
-	"github.com/productivestudy/auth/pkg/service"
-	"github.com/productivestudy/auth/tests/helpers"
 )
 
 var _ = Describe("Token", func() {
