@@ -13,3 +13,5 @@ coverprofile.out
 
 # Environment files
 .env
+
+/test/tls/

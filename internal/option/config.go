@@ -31,6 +31,12 @@ type Config struct {
 
 	// DBFile The path to the connection info for the DB
 	DBFile ConfigOption
+
+	// TLSCert The path to the TLS certificate for HTTPS
+	TLSCert ConfigOption
+
+	// TLSKey The path to the TLS key for HTTPS
+	TLSKey ConfigOption
 }
 
 const (
@@ -45,33 +51,45 @@ var (
 	DefaultConfig = Config{
 		Port: ConfigOption{
 			Default: "8080",
-			EnvVar:  "PS_AUTH_PORT",
+			EnvVar:  "SRO_AUTH_PORT",
 			Flag:    "port",
 			Usage:   "The port for the application",
 		},
 		Host: ConfigOption{
 			Default: "",
-			EnvVar:  "PS_AUTH_HOST",
+			EnvVar:  "SRO_AUTH_HOST",
 			Flag:    "host",
 			Usage:   "The host address for the application",
 		},
 		Mode: ConfigOption{
 			Default: DebugMode,
-			EnvVar:  "PS_AUTH_MODE",
+			EnvVar:  "SRO_AUTH_MODE",
 			Flag:    "mode",
 			Usage:   "The running mode for the application",
 		},
 		KeyDir: ConfigOption{
-			Default: "/etc/ps/auth",
-			EnvVar:  "PS_KEY_DIR",
+			Default: "/etc/sro/auth",
+			EnvVar:  "SRO_KEY_DIR",
 			Flag:    "keys",
 			Usage:   "The path to the keys for JWT auth",
 		},
 		DBFile: ConfigOption{
-			Default: "/etc/ps/db.yaml",
-			EnvVar:  "PS_DB_FILE",
+			Default: "/etc/sro/db.yaml",
+			EnvVar:  "SRO_DB_FILE",
 			Flag:    "db",
 			Usage:   "The path to the connection info for the DB",
+		},
+		TLSCert: ConfigOption{
+			Default: "/etc/sro/tls/tls.crt",
+			EnvVar:  "SRO_TLS_CRT_PATH",
+			Flag:    "tlscrt",
+			Usage:   "The path to the TLS certificate for HTTPS",
+		},
+		TLSKey: ConfigOption{
+			Default: "/etc/sro/tls/tls.key",
+			EnvVar:  "SRO_TLS_CRT_PATH",
+			Flag:    "tlskey",
+			Usage:   "The path to the TLS key for HTTPS",
 		},
 	}
 )
@@ -108,6 +126,8 @@ func (c *Config) readFlags() {
 	c.Mode.readFlag()
 	c.KeyDir.readFlag()
 	c.DBFile.readFlag()
+	c.TLSCert.readFlag()
+	c.TLSKey.readFlag()
 	flag.Parse()
 }
 
@@ -121,6 +141,8 @@ func (c *Config) readEnvs() {
 	c.Mode.readEnv()
 	c.KeyDir.readEnv()
 	c.DBFile.readEnv()
+	c.TLSCert.readEnv()
+	c.TLSKey.readEnv()
 }
 
 func (co *ConfigOption) readEnv() {

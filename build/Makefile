@@ -34,6 +34,14 @@ BIN_DIR = $(realpath $(ROOT_DIR)/bin)
 # Entrypoint for applications
 APP_MAIN = $(BASE_APP_DIR)/accounts/main.go
 
+# Base container registry
+SRO_BASE_REGISTRY ?= 779965382548.dkr.ecr.us-east-1.amazonaws.com
+SRO_REGISTRY ?= $(SRO_BASE_REGISTRY)/sro
+
+# The registry for this service
+REGISTRY = $(SRO_REGISTRY)/accounts
+time=$(shell date +%s)
+
 #   _____                    _
 #  |_   _|                  | |
 #    | | __ _ _ __ __ _  ___| |_ ___
@@ -48,3 +56,19 @@ build:
 
 test:
 	ginkgo $(ROOT_DIR)/... -covermode atomic
+
+deploy: build-image aws-docker-login push-images
+
+build-image:
+	docker build -t sro-accounts -f Dockerfile ..
+
+aws-docker-login:
+	aws ecr get-login-password | docker login --username AWS --password-stdin $(SRO_BASE_REGISTRY)
+
+push-images:
+	docker tag sro-accounts $(REGISTRY):latest
+	docker tag sro-accounts $(REGISTRY):$(BASE_VERSION)
+	docker tag sro-accounts $(REGISTRY):$(BASE_VERSION)-$(time)
+	docker push $(REGISTRY):latest
+	docker push $(REGISTRY):$(BASE_VERSION)
+	docker push $(REGISTRY):$(BASE_VERSION)-$(time)

@@ -1,0 +1,87 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: accounts
+  namespace: sro
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      web: accounts
+  template:
+    metadata:
+      labels:
+        web: accounts
+    spec:
+      containers:
+        - name: accounts
+          image: 779965382548.dkr.ecr.us-east-1.amazonaws.com/sro/accounts:latest
+          imagePullPolicy: Always
+          env:
+            - name: PS_AUTH_JWT_PRIVATE_KEY_PATH
+              value: "/etc/sro/auth/keys/key"
+            - name: PS_AUTH_JWT_PUBLIC_KEY_PATH
+              value: "/etc/sro/auth/keys/key.pub"
+            - name: SRO_AUTH_MODE
+              value: "release"
+          volumeMounts:
+            - name: jwt-certs
+              mountPath: "/etc/sro/auth/"
+              readOnly: true
+            - name: mysql-db
+              mountPath: "/etc/sro/"
+              readOnly: true
+      imagePullSecrets:
+        - name: regcred
+      volumes:
+        - name: jwt-certs
+          secret:
+            secretName: sro-jwt.default
+            items:
+              - key: jwt.key
+                path: key
+              - key: jwt.key.pub
+                path: key.pub
+        - name: mysql-db
+          secret:
+            secretName: sro-db.default
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts
+  namespace: sro
+spec:
+  type: NodePort
+  selector:
+    web: accounts
+  ports:
+    - port: 443
+      targetPort: 8080
+      protocol: TCP
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  namespace: sro
+  name: accounts
+  annotations:
+    kubernetes.io/ingress.class: alb
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+spec:
+  tls:
+  - hosts:
+    - accounts.shatteredrealmsonline.com
+    secretName: accounts-sro-tls-app-secret
+  rules:
+    - host: accounts.shatteredrealmsonline.com
+      http:
+        paths:
+          - path: /api
+            pathType: Prefix
+            backend:
+              service:
+                name: accounts
+                port:
+                  number: 443

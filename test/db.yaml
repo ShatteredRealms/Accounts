@@ -1,5 +1,5 @@
 host: localhost
 port: 3306
-name: shatteredrealmsonline
-user: shatteredrealmsonline
-pass: shatteredrealmsonline
+name: sro
+user: sro
+pass: sro

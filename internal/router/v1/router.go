@@ -8,6 +8,7 @@ import (
 	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/pkg/repository"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
+	"github.com/unrolled/secure"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -26,6 +27,10 @@ func InitRouter(db *gorm.DB, config option.Config, logger log.LoggerService) (*g
 	router.Use(middlewares.ContentTypeMiddleWare())
 	router.Use(middlewares.CORSMiddleWare())
 	router.NoRoute(noRouteHandler())
+
+	if config.IsRelease() {
+		router.Use(loadTLS(config.Address()))
+	}
 
 	userRepository := repository.NewUserRepository(db)
 	if err := userRepository.Migrate(); err != nil {
@@ -54,4 +59,19 @@ func noRouteHandler() gin.HandlerFunc {
 
 func setupDocRouters(rg *gin.RouterGroup) {
 	rg.GET("/docs/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+}
+
+func loadTLS(address string) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		middleware := secure.New(secure.Options{
+			SSLRedirect: true,
+			SSLHost:     address,
+		})
+
+		if middleware.Process(c.Writer, c.Request) != nil {
+			return
+		}
+
+		c.Next()
+	}
 }
