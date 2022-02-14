@@ -47,8 +47,15 @@ func main() {
 
 	}
 
-	err = r.Run(config.Address())
+	go func() {
+		err = r.Run(":8888")
+		if err != nil {
+			logger.Log(log.Error, fmt.Sprintf("http: server crash: %v", err))
+		}
+	}()
+
+	err = r.RunTLS(config.Address(), *config.TLSCert.Value, *config.TLSKey.Value)
 	if err != nil {
-		logger.Log(log.Error, fmt.Sprintf("error: server crash: %v", err))
+		logger.Log(log.Error, fmt.Sprintf("https: server crash: %v", err))
 	}
 }
