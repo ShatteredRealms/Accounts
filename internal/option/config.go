@@ -45,31 +45,31 @@ var (
 	DefaultConfig = Config{
 		Port: ConfigOption{
 			Default: "8080",
-			EnvVar:  "PS_AUTH_PORT",
+			EnvVar:  "SRO_ACCOUNTS_PORT",
 			Flag:    "port",
 			Usage:   "The port for the application",
 		},
 		Host: ConfigOption{
 			Default: "",
-			EnvVar:  "PS_AUTH_HOST",
+			EnvVar:  "SRO_ACCOUNTS_HOST",
 			Flag:    "host",
 			Usage:   "The host address for the application",
 		},
 		Mode: ConfigOption{
 			Default: DebugMode,
-			EnvVar:  "PS_AUTH_MODE",
+			EnvVar:  "SRO_ACCOUNTS_MODE",
 			Flag:    "mode",
 			Usage:   "The running mode for the application",
 		},
 		KeyDir: ConfigOption{
-			Default: "/etc/ps/auth",
-			EnvVar:  "PS_KEY_DIR",
+			Default: "/etc/sro/auth",
+			EnvVar:  "SRO_KEY_DIR",
 			Flag:    "keys",
 			Usage:   "The path to the keys for JWT auth",
 		},
 		DBFile: ConfigOption{
-			Default: "/etc/ps/db.yaml",
-			EnvVar:  "PS_DB_FILE",
+			Default: "/etc/sro/db.yaml",
+			EnvVar:  "SRO_DB_FILE",
 			Flag:    "db",
 			Usage:   "The path to the connection info for the DB",
 		},
@@ -90,8 +90,7 @@ func (c *Config) Address() string {
 
 // GetValue Gets the value for the Config option if it's set, otherwise it gets the default value
 func (co *ConfigOption) GetValue() string {
-	v := co.Value
-	if v == nil {
+	if co.Value == nil {
 		return co.Default
 	}
 	return *co.Value

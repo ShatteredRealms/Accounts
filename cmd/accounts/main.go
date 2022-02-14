@@ -6,6 +6,8 @@ import (
 	"github.com/ShatteredRealms/Accounts/internal/option"
 	v1 "github.com/ShatteredRealms/Accounts/internal/router/v1"
 	"github.com/ShatteredRealms/Accounts/pkg/repository"
+	"gopkg.in/yaml.v3"
+	"io/ioutil"
 	"os"
 )
 
@@ -19,7 +21,20 @@ func main() {
 		logger = log.NewLogger(log.Debug, "")
 	}
 
-	db, err := repository.DBConnect(*config.DBFile.Value)
+	file, err := ioutil.ReadFile(*config.DBFile.Value)
+	if err != nil {
+		logger.Log(log.Error, fmt.Sprintf("reading db file: %v", err))
+		os.Exit(1)
+	}
+
+	c := &repository.DBConnections{}
+	err = yaml.Unmarshal(file, c)
+	if err != nil {
+		logger.Log(log.Error, fmt.Sprintf("parsing db file: %v", err))
+		os.Exit(1)
+	}
+
+	db, err := repository.DBConnect(*c)
 	if err != nil {
 		logger.Log(log.Error, fmt.Sprintf("db: %v", err))
 		os.Exit(1)
@@ -29,6 +44,7 @@ func main() {
 
 	if config.IsRelease() {
 		logger.Log(log.Info, "Service running")
+
 	}
 
 	err = r.Run(config.Address())

@@ -13,3 +13,8 @@ coverprofile.out
 
 # Environment files
 .env
+
+/test/tls/
+
+# Production files
+*_prod*

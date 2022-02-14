@@ -2,11 +2,9 @@ package repository
 
 import (
 	"fmt"
-	"gopkg.in/yaml.v3"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
-	"io/ioutil"
-	"log"
+	"gorm.io/plugin/dbresolver"
 )
 
 // Connection Information on how to connect to the MySQL database
@@ -18,29 +16,30 @@ type Connection struct {
 	Password string `yaml:"pass"`
 }
 
+// DBConnections Defines the master and slave connections to a replicated database. Slaves may be empty.
+type DBConnections struct {
+	Master Connection   `yaml:"master"`
+	Slaves []Connection `yaml:"slaves"`
+}
+
 // DBConnect Initializes the connection to the database
-func DBConnect(filePath string) (*gorm.DB, error) {
-	file, err := ioutil.ReadFile(filePath)
+func DBConnect(connections DBConnections) (*gorm.DB, error) {
+	db, err := gorm.Open(mysql.Open(connections.Master.DSN()), &gorm.Config{})
 	if err != nil {
-		log.Fatalf("reading db file: %v", err)
+		return nil, err
 	}
 
-	c := &Connection{}
-	err = yaml.Unmarshal(file, c)
-	if err != nil {
-		log.Fatalf("yaml: %v", err)
+	replicas := make([]gorm.Dialector, len(connections.Slaves))
+	for _, slave := range connections.Slaves {
+		replicas = append(replicas, mysql.Open(slave.DSN()))
 	}
 
-	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8&parseTime=True&loc=Local",
-		c.Username,
-		c.Password,
-		c.Host,
-		c.Port,
-		c.Name,
-	)
+	err = db.Use(dbresolver.Register(dbresolver.Config{
+		Replicas: replicas,
+		Policy:   dbresolver.RandomPolicy{},
+	}))
 
-	return gorm.Open(mysql.Open(dsn), &gorm.Config{})
+	return db, err
 }
 
 func (c Connection) DSN() string {
