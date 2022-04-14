@@ -26,9 +26,6 @@ spec:
         - name: accounts
           image: 779965382548.dkr.ecr.us-east-1.amazonaws.com/sro/accounts:latest
           imagePullPolicy: Always
-          envFrom:
-            - secretRef:
-                name: sro-dotenv
           env:
             - name: PS_AUTH_JWT_PRIVATE_KEY_PATH
               value: "/etc/sro/auth/keys/key"

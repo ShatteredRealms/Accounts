@@ -64,7 +64,10 @@ build:
 test:
 	ginkgo $(ROOT_DIR)/... -covermode atomic
 
-deploy: build-image aws-docker-login push-images
+run:
+	SRO_DB_FILE=$(ROOT_DIR)/test/db_prod.yaml SRO_KEY_DIR=$(ROOT_DIR)/test/auth go run $(APP_MAIN)
+
+deploy: aws-docker-login push
 
 build-image:
 	docker build -t sro-accounts -f Dockerfile ..
@@ -72,7 +75,7 @@ build-image:
 aws-docker-login:
 	aws ecr get-login-password | docker login --username AWS --password-stdin $(SRO_BASE_REGISTRY)
 
-push-images:
+push: build-image
 	docker tag sro-accounts $(REGISTRY):latest
 	docker tag sro-accounts $(REGISTRY):$(BASE_VERSION)
 	docker tag sro-accounts $(REGISTRY):$(BASE_VERSION)-$(time)

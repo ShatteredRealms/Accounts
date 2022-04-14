@@ -43,7 +43,7 @@ func InitRouter(db *gorm.DB, config option.Config, logger log.LoggerService) (*g
 		return nil, fmt.Errorf("jwt service: %w", err)
 	}
 
-	apiV1 := router.Group("/api/v1")
+	apiV1 := router.Group("/v1/auth")
 	SetHealthRoutes(apiV1)
 	SetAuthRoutes(apiV1, userService, jwtService, logger)
 	setupDocRouters(apiV1)

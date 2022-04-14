@@ -1,7 +1,7 @@
 master:
   host: localhost
   port: 3306
-  name: sro
+  name: accounts
   user: sro
-  pass: sro
+  pass: password
 slaves: []

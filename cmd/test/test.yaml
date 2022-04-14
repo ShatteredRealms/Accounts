@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sro-accounts-test
+spec:
+  containers:
+    - name: testimage
+      image: 779965382548.dkr.ecr.us-east-1.amazonaws.com/sro/accounts:testimage
+      imagePullPolicy: Always
