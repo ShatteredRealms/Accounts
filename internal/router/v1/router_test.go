@@ -1,14 +1,14 @@
 package v1_test
 
 import (
+	"github.com/ShatteredRealms/Accounts/internal/log"
+	"github.com/ShatteredRealms/Accounts/internal/option"
+	v1 "github.com/ShatteredRealms/Accounts/internal/router/v1"
 	"github.com/gin-gonic/gin"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-
-	"github.com/productivestudy/auth/cmd/auth/option"
-	v1 "github.com/productivestudy/auth/cmd/auth/router/v1"
 )
 
 var _ = Describe("Router", func() {
@@ -33,7 +33,8 @@ var _ = Describe("Router", func() {
 			db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(db).NotTo(BeNil())
-			router, err := v1.InitRouter(db, config)
+			logger := log.NewLogger(log.Info, "")
+			router, err := v1.InitRouter(db, config, logger)
 
 			Expect(router).NotTo(BeNil())
 			Expect(err).ShouldNot(HaveOccurred())
@@ -42,5 +43,6 @@ var _ = Describe("Router", func() {
 })
 
 func startRoutingNil_Release() {
-	v1.InitRouter(nil, option.Config{})
+	logger := log.NewLogger(log.Info, "")
+	v1.InitRouter(nil, option.Config{}, logger)
 }

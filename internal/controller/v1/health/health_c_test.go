@@ -2,13 +2,12 @@ package health_test
 
 import (
 	"encoding/json"
+	"github.com/ShatteredRealms/Accounts/internal/controller/v1/health"
+	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"net/http"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
-
-	"github.com/productivestudy/auth/cmd/auth/controller/v1/health"
-	"github.com/productivestudy/auth/tests/helpers"
 )
 
 var _ = Describe("Health", func() {

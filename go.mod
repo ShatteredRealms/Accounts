@@ -8,7 +8,6 @@ require (
 	github.com/lib/pq v1.10.2
 	github.com/onsi/ginkgo/v2 v2.1.1
 	github.com/onsi/gomega v1.18.1
-	github.com/productivestudy/auth v0.0.0-20220126031724-fbfb8d0e5b12
 	github.com/prometheus/client_golang v1.12.1
 	github.com/swaggo/gin-swagger v1.4.0
 	github.com/unrolled/secure v1.0.9
