@@ -33,19 +33,16 @@ var _ = Describe("CORS", func() {
 		http.MethodOptions: http.StatusNoContent,
 	}
 
-	var method string
-	var expectedStatus int
-	for method, expectedStatus = range methods {
+	for method, expectedStatus := range methods {
 		It(fmt.Sprintf("should respond to %s requests with %d status code", method, expectedStatus), func() {
-			w, _, r = helpers.SetupTestEnvironment(method)
+			testMethod := method
+			testExpectedStatus := expectedStatus
+			w, _, r = helpers.SetupTestEnvironment(testMethod)
 			r.Use(CORSMiddleWare())
-			req, _ = http.NewRequest(method, "/"+path, nil)
+			req, _ = http.NewRequest(testMethod, "/"+path, nil)
+			r.Handle(testMethod, path, helpers.TestHandler)
+			r.ServeHTTP(w, req)
+			Expect(w.Code).To(Equal(testExpectedStatus))
 		})
 	}
-
-	AfterEach(func() {
-		r.Handle(method, path, helpers.TestHandler)
-		r.ServeHTTP(w, req)
-		Expect(w.Code).To(Equal(expectedStatus))
-	})
 })

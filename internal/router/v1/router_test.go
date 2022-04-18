@@ -11,10 +11,13 @@ import (
 	"gorm.io/gorm"
 )
 
+var logger log.LoggerService = log.NewLogger(log.Info, "")
+
 var _ = Describe("Router", func() {
 	var keyDir string
 	var releaseMode string
 	var config option.Config
+	
 
 	BeforeEach(func() {
 		keyDir = "../../../test/auth"
@@ -33,7 +36,6 @@ var _ = Describe("Router", func() {
 			db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"), &gorm.Config{})
 			Expect(err).NotTo(HaveOccurred())
 			Expect(db).NotTo(BeNil())
-			logger := log.NewLogger(log.Info, "")
 			router, err := v1.InitRouter(db, config, logger)
 
 			Expect(router).NotTo(BeNil())
@@ -43,6 +45,5 @@ var _ = Describe("Router", func() {
 })
 
 func startRoutingNil_Release() {
-	logger := log.NewLogger(log.Info, "")
 	v1.InitRouter(nil, option.Config{}, logger)
 }
