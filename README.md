@@ -3,4 +3,3 @@
 # Overview
 The accounts microservice for [Shattered Realms Online](https://github.com/ShatteredRealms/Game). Manages user accounts,
 and authentication throughout SRO.
-
