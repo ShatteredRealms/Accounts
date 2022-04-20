@@ -3,41 +3,36 @@ package auth_test
 import (
 	"bytes"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/internal/controller/v1/auth"
 	"github.com/ShatteredRealms/Accounts/internal/log"
 	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
-	"github.com/ShatteredRealms/Accounts/pkg/service"
-	"net/http"
-	"net/http/httptest"
-	"time"
-
+	"github.com/ShatteredRealms/Accounts/test/mocks"
 	"github.com/gin-gonic/gin"
-	"github.com/golang-jwt/jwt"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"golang.org/x/crypto/bcrypt"
-	"gorm.io/gorm"
+	"net/http"
+	"net/http/httptest"
 )
 
 var _ = Describe("Auth controller ", func() {
-	var userService testUserService
+	var userService mocks.UserService
 	var authController auth.AuthController
 	var w *httptest.ResponseRecorder
 	var c *gin.Context
 	l := log.NewLogger(log.Error, "")
 
 	BeforeEach(func() {
-		userService = testUserService{
+		userService = mocks.UserService{
 			CreateReturn:      nil,
 			SaveReturn:        nil,
 			FindByEmailReturn: model.User{},
 			FindByIdReturn:    model.User{},
 		}
 
-		authController = auth.NewAuthController(userService, testJWT(true), l)
+		authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 
 		w, c, _ = helpers.SetupTestEnvironment("POST")
 	})
@@ -64,7 +59,7 @@ var _ = Describe("Auth controller ", func() {
 			})
 
 			It("should error with an invalid body", func() {
-				c.Request, _ = http.NewRequest(http.MethodPost, "/", errReader(1))
+				c.Request, _ = http.NewRequest(http.MethodPost, "/", mocks.ErrReader(1))
 				authController.Login(c)
 
 				resp := model.ResponseModel{}
@@ -119,7 +114,7 @@ var _ = Describe("Auth controller ", func() {
 				var buf bytes.Buffer
 				Expect(json.NewEncoder(&buf).Encode(body)).ShouldNot(HaveOccurred())
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
-				authController = auth.NewAuthController(userService, testJWT(true), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 				authController.Login(c)
 
 				resp := model.ResponseModel{}
@@ -131,7 +126,7 @@ var _ = Describe("Auth controller ", func() {
 
 			It("should fail if the password is saved incorrectly", func() {
 				userService.FindByEmailReturn.ID = 1
-				authController = auth.NewAuthController(userService, testJWT(true), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 				var buf bytes.Buffer
 				Expect(json.NewEncoder(&buf).Encode(body)).ShouldNot(HaveOccurred())
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
@@ -148,7 +143,7 @@ var _ = Describe("Auth controller ", func() {
 				userService.FindByEmailReturn.ID = 1
 				password, err := bcrypt.GenerateFromPassword([]byte(body.Password+"a"), 0)
 				userService.FindByEmailReturn.Password = string(password)
-				authController = auth.NewAuthController(userService, testJWT(true), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 
 				Expect(err).ShouldNot(HaveOccurred())
 				var buf bytes.Buffer
@@ -167,7 +162,7 @@ var _ = Describe("Auth controller ", func() {
 				userService.FindByEmailReturn.ID = 1
 				password, err := bcrypt.GenerateFromPassword([]byte(body.Password), 0)
 				userService.FindByEmailReturn.Password = string(password)
-				authController = auth.NewAuthController(userService, testJWT(false), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(false), l)
 
 				Expect(err).ShouldNot(HaveOccurred())
 				var buf bytes.Buffer
@@ -186,7 +181,7 @@ var _ = Describe("Auth controller ", func() {
 				userService.FindByEmailReturn.ID = 1
 				password, err := bcrypt.GenerateFromPassword([]byte(body.Password), 0)
 				userService.FindByEmailReturn.Password = string(password)
-				authController = auth.NewAuthController(userService, testJWT(true), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 
 				Expect(err).ShouldNot(HaveOccurred())
 				var buf bytes.Buffer
@@ -215,7 +210,7 @@ var _ = Describe("Auth controller ", func() {
 			})
 
 			It("should error with an invalid body", func() {
-				c.Request, _ = http.NewRequest(http.MethodPost, "/", errReader(1))
+				c.Request, _ = http.NewRequest(http.MethodPost, "/", mocks.ErrReader(1))
 				authController.Register(c)
 
 				resp := model.ResponseModel{}
@@ -250,7 +245,7 @@ var _ = Describe("Auth controller ", func() {
 
 			It("should fail if create fails", func() {
 				userService.CreateReturn = fmt.Errorf(helpers.RandString(10))
-				authController = auth.NewAuthController(userService, testJWT(true), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 				var buf bytes.Buffer
 				Expect(json.NewEncoder(&buf).Encode(body)).ShouldNot(HaveOccurred())
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
@@ -264,7 +259,7 @@ var _ = Describe("Auth controller ", func() {
 			})
 
 			It("should fail if jwt service fails", func() {
-				authController = auth.NewAuthController(userService, testJWT(false), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(false), l)
 				var buf bytes.Buffer
 				Expect(json.NewEncoder(&buf).Encode(body)).ShouldNot(HaveOccurred())
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
@@ -278,7 +273,7 @@ var _ = Describe("Auth controller ", func() {
 			})
 
 			It("should suceed with a valid request", func() {
-				authController = auth.NewAuthController(userService, testJWT(true), l)
+				authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 				var buf bytes.Buffer
 				Expect(json.NewEncoder(&buf).Encode(body)).ShouldNot(HaveOccurred())
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
@@ -292,52 +287,3 @@ var _ = Describe("Auth controller ", func() {
 		})
 	})
 })
-
-type errReader int
-
-func (errReader) Read(p []byte) (int, error) {
-	return 0, errors.New("test error")
-}
-
-// testJWT If true, returns no errors with string ok, otherwise returns error.
-type testJWT bool
-
-func (t testJWT) Create(time.Duration, jwt.MapClaims) (string, error) {
-	if t {
-		return "ok", nil
-	} else {
-		return "", fmt.Errorf("error")
-	}
-}
-
-func (t testJWT) Validate(token string) (interface{}, error) {
-	if t {
-		return "ok", nil
-	} else {
-		return "", fmt.Errorf("error")
-	}
-}
-
-type testUserService struct {
-	CreateReturn      error
-	SaveReturn        error
-	FindByIdReturn    model.User
-	FindByEmailReturn model.User
-}
-
-func (t testUserService) Create(u model.User) (model.User, error) {
-	return u, t.CreateReturn
-}
-func (t testUserService) Save(u model.User) (model.User, error) {
-	return u, t.SaveReturn
-}
-func (t testUserService) WithTrx(*gorm.DB) service.UserService {
-	return t
-}
-
-func (t testUserService) FindById(id uint) model.User {
-	return t.FindByIdReturn
-}
-func (t testUserService) FindByEmail(email string) model.User {
-	return t.FindByEmailReturn
-}

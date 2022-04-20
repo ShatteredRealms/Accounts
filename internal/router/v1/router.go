@@ -46,6 +46,7 @@ func InitRouter(db *gorm.DB, config option.Config, logger log.LoggerService) (*g
 	apiV1 := router.Group("/v1")
 	SetHealthRoutes(apiV1)
 	SetAuthRoutes(apiV1, userService, jwtService, logger)
+	SetUsersRoutes(apiV1, userService, logger)
 	setupDocRouters(apiV1)
 
 	return router, nil

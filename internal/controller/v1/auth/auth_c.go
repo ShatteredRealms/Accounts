@@ -171,8 +171,13 @@ func (a authController) Register(c *gin.Context) {
 
 	a.logger.LogRegisterRequest()
 	data := model.LoginResponse{
-		Token: t,
+		ID:        user.ID,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Email:     user.Email,
+		Token:     t,
 	}
+
 	resp := model.NewSuccessResponse(c, "Success", data)
 	c.JSON(resp.StatusCode, resp)
 }

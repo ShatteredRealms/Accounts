@@ -12,6 +12,11 @@ type LoginRequest struct {
 
 // LoginResponse The data to respond with upon a successful login attempt
 type LoginResponse struct {
+	ID        uint   `json:"id"`
+	FirstName string `json:"first_name"`
+	LastName  string `json:"last_name"`
+	Email     string `json:"email"`
+
 	// Token the JWT token for the authenticated user
 	Token string `json:"token"`
 }
