@@ -19,6 +19,7 @@ var _ = Describe("User", func() {
 			LastName:  helpers.RandString(10),
 			Email:     helpers.RandString(10) + "@test.com",
 			Password:  helpers.RandString(10),
+			Username:  helpers.RandString(10),
 		}
 	})
 
@@ -76,12 +77,12 @@ var _ = Describe("User", func() {
 
 		It("should require a first name", func() {
 			user.FirstName = ""
-			expectedError = fmt.Errorf("cannot create a user without a first name")
+			expectedError = fmt.Errorf("first name cannot be empty")
 		})
 
 		It("should require a last name", func() {
 			user.LastName = ""
-			expectedError = fmt.Errorf("cannot create a user without a last name")
+			expectedError = fmt.Errorf("last name cannot be empty")
 		})
 
 		It("should require a password", func() {
@@ -91,12 +92,12 @@ var _ = Describe("User", func() {
 
 		It(fmt.Sprintf("should require a password with minimum length of %d", model.MinPasswordLength), func() {
 			user.Password = helpers.RandString(model.MinPasswordLength - 1)
-			expectedError = fmt.Errorf("less than minimum password length of %d", model.MinPasswordLength)
+			expectedError = fmt.Errorf("password less than minimum length of %d", model.MinPasswordLength)
 		})
 
 		It(fmt.Sprintf("should require a password with maximum length of %d", model.MaxPasswordLength), func() {
 			user.Password = helpers.RandString(model.MaxPasswordLength + 1)
-			expectedError = fmt.Errorf("exeeded maximum password length of %d", model.MaxPasswordLength)
+			expectedError = fmt.Errorf("password exeeded maximum length of %d", model.MaxPasswordLength)
 		})
 
 		It(fmt.Sprintf("should allow a password of length of %d", model.MaxPasswordLength), func() {
