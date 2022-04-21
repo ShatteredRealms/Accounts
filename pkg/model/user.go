@@ -9,8 +9,10 @@ import (
 )
 
 const (
-	MinPasswordLength = 6
-	MaxPasswordLength = 64
+	MinPasswordLength  = 6
+	MaxPasswordLength  = 64
+	MaxFirstNameLength = 50
+	MaxLastNameLength  = MaxFirstNameLength
 )
 
 // User Database model for a User
@@ -33,24 +35,16 @@ func (u *User) Validate() error {
 		return fmt.Errorf("email is not valid")
 	}
 
-	if u.FirstName == "" {
-		return fmt.Errorf("cannot create a user without a first name")
+	if err := u.validateFirstName(); err != nil {
+		return err
 	}
 
-	if u.LastName == "" {
-		return fmt.Errorf("cannot create a user without a last name")
+	if err := u.validateLastName(); err != nil {
+		return err
 	}
 
-	if u.Password == "" {
-		return fmt.Errorf("cannot create a user without a password")
-	}
-
-	if len(u.Password) < MinPasswordLength {
-		return fmt.Errorf("less than minimum password length of %d", MinPasswordLength)
-	}
-
-	if len(u.Password) > MaxPasswordLength {
-		return fmt.Errorf("exeeded maximum password length of %d", MaxPasswordLength)
+	if err := u.validatePassword(); err != nil {
+		return err
 	}
 
 	return nil
@@ -71,4 +65,44 @@ func (u *User) Login(password string) error {
 
 func (u *User) Exists() bool {
 	return u.ID != 0
+}
+
+func (u *User) validateFirstName() error {
+	if u.FirstName == "" {
+		return fmt.Errorf("first name cannot be empty")
+	}
+
+	if len(u.FirstName) > MaxFirstNameLength {
+		return fmt.Errorf("first name cannot be longer than 50 characters")
+	}
+
+	return nil
+}
+
+func (u *User) validateLastName() error {
+	if u.LastName == "" {
+		return fmt.Errorf("last name cannot be empty")
+	}
+
+	if len(u.LastName) > MaxLastNameLength {
+		return fmt.Errorf("last name cannot be longer than 50 characters")
+	}
+
+	return nil
+}
+
+func (u *User) validatePassword() error {
+	if u.Password == "" {
+		return fmt.Errorf("cannot create a user without a password")
+	}
+
+	if len(u.Password) < MinPasswordLength {
+		return fmt.Errorf("password less than minimum password length of %d", MinPasswordLength)
+	}
+
+	if len(u.Password) > MaxPasswordLength {
+		return fmt.Errorf("password exeeded maximum password length of %d", MaxPasswordLength)
+	}
+
+	return nil
 }
