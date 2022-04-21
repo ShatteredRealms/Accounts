@@ -8,7 +8,7 @@ import (
 
 func ValidatePresent(c *gin.Context, fieldName string, field string) bool {
 	if field == "" {
-		resp := model.NewBadRequestResponse(c, fmt.Sprintf("Missing %s", fieldName))
+		resp := model.NewBadRequestResponse(c, fmt.Sprintf("missing %s", fieldName))
 		c.JSON(resp.StatusCode, resp)
 		return false
 	}

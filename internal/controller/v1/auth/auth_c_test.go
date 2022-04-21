@@ -55,7 +55,7 @@ var _ = Describe("Auth controller ", func() {
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
-				Expect(resp.Errors[0].Info).To(Equal("Payload missing"))
+				Expect(resp.Errors[0].Info).To(Equal("payload missing"))
 			})
 
 			It("should error with an invalid body", func() {
@@ -77,7 +77,7 @@ var _ = Describe("Auth controller ", func() {
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
-				Expect(resp.Errors[0].Info).To(Equal("Expected JSON body"))
+				Expect(resp.Errors[0].Info).To(Equal("expected JSON body"))
 			})
 		})
 
@@ -93,7 +93,7 @@ var _ = Describe("Auth controller ", func() {
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
-				Expect(resp.Errors[0].Info).To(Equal("Missing email"))
+				Expect(resp.Errors[0].Info).To(Equal("missing email"))
 			})
 
 			It("should require password field", func() {
@@ -107,7 +107,7 @@ var _ = Describe("Auth controller ", func() {
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
-				Expect(resp.Errors[0].Info).To(Equal("Missing password"))
+				Expect(resp.Errors[0].Info).To(Equal("missing password"))
 			})
 
 			It("should fail if the email does not exist", func() {
@@ -206,7 +206,7 @@ var _ = Describe("Auth controller ", func() {
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
-				Expect(resp.Errors[0].Info).To(Equal("Payload missing"))
+				Expect(resp.Errors[0].Info).To(Equal("payload missing"))
 			})
 
 			It("should error with an invalid body", func() {
@@ -228,7 +228,7 @@ var _ = Describe("Auth controller ", func() {
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
-				Expect(resp.Errors[0].Info).To(Equal("Expected JSON body"))
+				Expect(resp.Errors[0].Info).To(Equal("expected JSON body"))
 			})
 		})
 
