@@ -97,9 +97,13 @@ func (a authController) Login(c *gin.Context) {
 		c.JSON(resp.StatusCode, resp)
 		return
 	}
-
 	data := model.LoginResponse{
-		Token: t,
+		Email:     user.Email,
+		Username:  user.Username,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		CreatedAt: user.CreatedAt,
+		Token:     t,
 	}
 
 	a.logger.LogLoginRequest()

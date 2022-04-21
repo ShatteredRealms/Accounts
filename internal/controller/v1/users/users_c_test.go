@@ -36,9 +36,22 @@ var _ = Describe("Users controller", func() {
 	Context("Requesting all users", func() {
 		It("should return all users", func() {
 			usersController.ListAll(c)
-			var resp []model.User
+
+			var resp model.ResponseModel
+			data := resp.Data
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
-			Expect(resp).To(Equal(userService.FindAllReturn))
+			Expect(data).To(BeNil())
+		})
+	})
+
+	Context("Requesting a user", func() {
+		It("should return the user", func() {
+			usersController.GetUser(c)
+
+			var resp model.ResponseModel
+			data := resp.Data
+			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
+			Expect(data).To(BeNil())
 		})
 	})
 })
