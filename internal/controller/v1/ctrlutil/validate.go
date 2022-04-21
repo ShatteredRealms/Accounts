@@ -1,0 +1,17 @@
+package ctrlutil
+
+import (
+	"fmt"
+	"github.com/ShatteredRealms/Accounts/pkg/model"
+	"github.com/gin-gonic/gin"
+)
+
+func ValidatePresent(c *gin.Context, fieldName string, field string) bool {
+	if field == "" {
+		resp := model.NewBadRequestResponse(c, fmt.Sprintf("Missing %s", fieldName))
+		c.JSON(resp.StatusCode, resp)
+		return false
+	}
+
+	return true
+}

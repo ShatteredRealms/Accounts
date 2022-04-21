@@ -19,6 +19,13 @@ type usersController struct {
 	logger      log.LoggerService
 }
 
+func NewUserController(u service.UserService, logger log.LoggerService) UsersController {
+	return usersController{
+		userService: u,
+		logger:      logger,
+	}
+}
+
 func (u usersController) ListAll(c *gin.Context) {
 	users := u.userService.FindAll()
 	parsedUsers := make([]model.StrippedUserModel, len(users))
@@ -63,9 +70,6 @@ func (u usersController) GetUser(c *gin.Context) {
 	c.JSON(http.StatusOK, model.NewSuccessResponse(c, "Success", parsedUser))
 }
 
-func NewUserController(u service.UserService, logger log.LoggerService) UsersController {
-	return usersController{
-		userService: u,
-		logger:      logger,
-	}
+func (u usersController) EditUser(c *gin.Context) {
+
 }
