@@ -11,6 +11,7 @@ type UserService struct {
 	SaveReturn        error
 	FindByIdReturn    model.User
 	FindByEmailReturn model.User
+	FindAllReturn     []model.User
 }
 
 func (t UserService) Create(u model.User) (model.User, error) {
@@ -28,4 +29,8 @@ func (t UserService) FindById(id uint) model.User {
 }
 func (t UserService) FindByEmail(email string) model.User {
 	return t.FindByEmailReturn
+}
+
+func (t UserService) FindAll() []model.User {
+	return t.FindAllReturn
 }

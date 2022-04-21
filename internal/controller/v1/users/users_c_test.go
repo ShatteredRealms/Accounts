@@ -26,6 +26,7 @@ var _ = Describe("Users controller", func() {
 			SaveReturn:        nil,
 			FindByEmailReturn: model.User{},
 			FindByIdReturn:    model.User{},
+			FindAllReturn:     []model.User{},
 		}
 
 		usersController = users.NewUserController(userService, logger)
@@ -35,9 +36,9 @@ var _ = Describe("Users controller", func() {
 	Context("Requesting all users", func() {
 		It("should return all users", func() {
 			usersController.ListAll(c)
-			var resp gin.H
+			var resp []model.User
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
-			Expect(resp).To(Equal(gin.H{"message": "service pending"}))
+			Expect(resp).To(Equal(userService.FindAllReturn))
 		})
 	})
 })

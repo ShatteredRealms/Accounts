@@ -19,6 +19,7 @@ type UserRepository interface {
 	FindById(id uint) model.User
 	FindByEmail(email string) model.User
 	Migrate() error
+	All() []model.User
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
@@ -76,4 +77,10 @@ func (u userRepository) FindByEmail(email string) model.User {
 
 func (u userRepository) Migrate() error {
 	return u.DB.AutoMigrate(&model.User{})
+}
+
+func (u userRepository) All() []model.User {
+	var users []model.User
+	u.DB.Find(&users)
+	return users
 }

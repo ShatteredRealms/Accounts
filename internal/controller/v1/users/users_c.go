@@ -2,6 +2,7 @@ package users
 
 import (
 	"github.com/ShatteredRealms/Accounts/internal/log"
+	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
 	"github.com/gin-gonic/gin"
 )
@@ -16,7 +17,20 @@ type usersController struct {
 }
 
 func (u usersController) ListAll(c *gin.Context) {
-	c.JSON(200, gin.H{"message": "service pending"})
+	users := u.userService.FindAll()
+	parsedUsers := make([]model.StrippedUserModel, len(users))
+	for i, u := range users {
+		parsedUsers[i] = model.StrippedUserModel{
+			FirstName: u.FirstName,
+			LastName:  u.LastName,
+			Email:     u.Email,
+			Username:  u.Username,
+			CreatedAt: u.CreatedAt,
+			ID:        u.ID,
+		}
+	}
+
+	c.JSON(200, parsedUsers)
 }
 
 func NewUserController(u service.UserService, logger log.LoggerService) UsersController {

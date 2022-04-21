@@ -12,6 +12,7 @@ type UserService interface {
 	WithTrx(*gorm.DB) UserService
 	FindById(id uint) model.User
 	FindByEmail(email string) model.User
+	FindAll() []model.User
 }
 
 type userService struct {
@@ -43,4 +44,8 @@ func (u userService) FindById(id uint) model.User {
 
 func (u userService) FindByEmail(email string) model.User {
 	return u.userRepository.FindByEmail(email)
+}
+
+func (u userService) FindAll() []model.User {
+	return u.userRepository.All()
 }
