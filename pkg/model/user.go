@@ -172,15 +172,15 @@ func (u *User) validatePassword() error {
 
 func (u *User) validateUsername() error {
 	if u.Username == "" {
-		return fmt.Errorf("cannot create a user without a password")
+		return fmt.Errorf("cannot create a user without a username")
 	}
 
 	if len(u.Username) < MinUsernameLength {
-		return fmt.Errorf("password less than minimum password length of %d", MinPasswordLength)
+		return fmt.Errorf("username less than minimum password length of %d", MinUsernameLength)
 	}
 
 	if len(u.Username) > MaxUsernameLength {
-		return fmt.Errorf("password exeeded maximum password length of %d", MaxPasswordLength)
+		return fmt.Errorf("username exeeded maximum password length of %d", MaxUsernameLength)
 	}
 
 	return nil

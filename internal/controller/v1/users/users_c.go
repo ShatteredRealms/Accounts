@@ -84,7 +84,7 @@ func (u usersController) EditUser(c *gin.Context) {
 
 	user, err = u.userService.Save(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.NewInternalServerResponse(c, "unable to update database"))
+		c.JSON(http.StatusInternalServerError, model.NewBadRequestResponse(c, err.Error()))
 		return
 	}
 

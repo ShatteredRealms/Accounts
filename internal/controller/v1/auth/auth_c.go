@@ -113,6 +113,7 @@ func (a authController) Register(c *gin.Context) {
 		LastName:  register.LastName,
 		Email:     register.Email,
 		Password:  register.Password,
+		Username:  register.Username,
 	}
 
 	user, err = a.userService.Create(user)
