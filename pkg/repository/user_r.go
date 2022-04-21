@@ -51,7 +51,7 @@ func (u userRepository) Create(user model.User) (model.User, error) {
 }
 
 func (u userRepository) Save(user model.User) (model.User, error) {
-	return user, u.DB.Save(&u).Error
+	return user, u.DB.Save(&user).Error
 }
 
 func (u userRepository) WithTrx(trx *gorm.DB) UserRepository {

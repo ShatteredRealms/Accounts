@@ -12,4 +12,5 @@ func SetUsersRoutes(rg *gin.RouterGroup, s service.UserService, logger log.Logge
 	usersController := users.NewUserController(s, logger)
 	rg.GET("/users", usersController.ListAll)
 	rg.GET("/users/:user", usersController.GetUser)
+	rg.PUT("/users/:user", usersController.EditUser)
 }

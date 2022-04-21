@@ -1,6 +1,8 @@
 package users
 
 import (
+	"fmt"
+	"github.com/ShatteredRealms/Accounts/internal/controller/v1/ctrlutil"
 	"github.com/ShatteredRealms/Accounts/internal/log"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
@@ -12,6 +14,7 @@ import (
 type UsersController interface {
 	ListAll(c *gin.Context)
 	GetUser(c *gin.Context)
+	EditUser(c *gin.Context)
 }
 
 type usersController struct {
@@ -44,17 +47,8 @@ func (u usersController) ListAll(c *gin.Context) {
 }
 
 func (u usersController) GetUser(c *gin.Context) {
-	id64, err := strconv.ParseUint(c.Param("user"), 10, 32)
-	id := uint(id64)
-
+	user, err := u.getUserFromParam(c, "user")
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.NewBadRequestResponse(c, "Invalid user ID"))
-	}
-
-	user := u.userService.FindById(id)
-
-	if (model.User{} == user) {
-		c.JSON(http.StatusNotFound, model.NewGenericNotFoundResponse(c))
 		return
 	}
 
@@ -71,5 +65,47 @@ func (u usersController) GetUser(c *gin.Context) {
 }
 
 func (u usersController) EditUser(c *gin.Context) {
+	userInfo := model.User{}
+	err := ctrlutil.ParseBody(c, &userInfo)
+	if err != nil {
+		return
+	}
 
+	user, err := u.getUserFromParam(c, "user")
+	if err != nil {
+		return
+	}
+
+	err = user.UpdateInfo(userInfo)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.NewBadRequestResponse(c, err.Error()))
+		return
+	}
+
+	user, err = u.userService.Save(user)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, model.NewInternalServerResponse(c, "unable to update database"))
+		return
+	}
+
+	c.JSON(http.StatusOK, model.NewSuccessResponse(c, "Success", nil))
+}
+
+func (u usersController) getUserFromParam(c *gin.Context, param string) (model.User, error) {
+	id64, err := strconv.ParseUint(c.Param(param), 10, 32)
+	id := uint(id64)
+
+	if err != nil {
+		c.JSON(http.StatusBadRequest, model.NewBadRequestResponse(c, "Invalid user ID"))
+		return model.User{}, err
+	}
+
+	user := u.userService.FindById(id)
+
+	if !user.Exists() {
+		c.JSON(http.StatusNotFound, model.NewGenericNotFoundResponse(c))
+		return model.User{}, fmt.Errorf("user not found")
+	}
+
+	return user, nil
 }
