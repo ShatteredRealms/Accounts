@@ -37,3 +37,8 @@ func RandString(n int) string {
 
 	return *(*string)(unsafe.Pointer(&b))
 }
+
+func RandInt(max uint) uint {
+	rand.Seed(time.Now().UnixNano())
+	return uint(rand.Int63n(int64(max)))
+}

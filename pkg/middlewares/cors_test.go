@@ -17,32 +17,33 @@ var _ = Describe("CORS", func() {
 	var r *gin.Engine
 	var req *http.Request
 
+	var methods map[string]int
+
 	BeforeEach(func() {
 		path = helpers.RandString(5)
+		methods = map[string]int{
+			http.MethodConnect: http.StatusOK,
+			http.MethodDelete:  http.StatusOK,
+			http.MethodGet:     http.StatusOK,
+			http.MethodHead:    http.StatusOK,
+			http.MethodPatch:   http.StatusOK,
+			http.MethodPost:    http.StatusOK,
+			http.MethodPut:     http.StatusOK,
+			http.MethodTrace:   http.StatusOK,
+			http.MethodOptions: http.StatusNoContent,
+		}
 	})
 
-	methods := map[string]int{
-		http.MethodConnect: http.StatusOK,
-		http.MethodDelete:  http.StatusOK,
-		http.MethodGet:     http.StatusOK,
-		http.MethodHead:    http.StatusOK,
-		http.MethodPatch:   http.StatusOK,
-		http.MethodPost:    http.StatusOK,
-		http.MethodPut:     http.StatusOK,
-		http.MethodTrace:   http.StatusOK,
-		http.MethodOptions: http.StatusNoContent,
-	}
-
 	for method, expectedStatus := range methods {
-		It(fmt.Sprintf("should respond to %s requests with %d status code", method, expectedStatus), func() {
-			testMethod := method
-			testExpectedStatus := expectedStatus
-			w, _, r = helpers.SetupTestEnvironment(testMethod)
-			r.Use(CORSMiddleWare())
-			req, _ = http.NewRequest(testMethod, "/"+path, nil)
-			r.Handle(testMethod, path, helpers.TestHandler)
-			r.ServeHTTP(w, req)
-			Expect(w.Code).To(Equal(testExpectedStatus))
+		When("input is "+method, func() {
+			It(fmt.Sprintf("should respond with status code %d", expectedStatus), func() {
+				w, _, r = helpers.SetupTestEnvironment(method)
+				r.Use(CORSMiddleWare())
+				req, _ = http.NewRequest(method, "/"+path, nil)
+				r.Handle(method, path, helpers.TestHandler)
+				r.ServeHTTP(w, req)
+				Expect(w.Code).To(Equal(expectedStatus))
+			})
 		})
 	}
 })

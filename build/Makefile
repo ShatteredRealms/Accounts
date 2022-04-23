@@ -64,8 +64,12 @@ build:
 test:
 	ginkgo $(ROOT_DIR)/... -covermode atomic
 
-run:
-	SRO_DB_FILE=$(ROOT_DIR)/test/db_prod.yaml SRO_KEY_DIR=$(ROOT_DIR)/test/auth go run $(APP_MAIN)
+report: test
+	go tool cover -func=$(ROOT_DIR)/coverage.out
+	go tool cover -html=$(ROOT_DIR)/coverage.out
+
+run-local:
+	SRO_DB_FILE=$(ROOT_DIR)/test/db.yaml SRO_KEY_DIR=$(ROOT_DIR)/test/auth go run $(APP_MAIN)
 
 deploy: aws-docker-login push
 

@@ -101,10 +101,10 @@ func (u usersController) getUserFromParam(c *gin.Context, param string) (model.U
 	}
 
 	user := u.userService.FindById(id)
-
 	if !user.Exists() {
-		c.JSON(http.StatusNotFound, model.NewGenericNotFoundResponse(c))
-		return model.User{}, fmt.Errorf("user not found")
+		err := fmt.Errorf("user not found")
+		c.JSON(http.StatusNotFound, model.NewBadRequestResponse(c, err.Error()))
+		return model.User{}, err
 	}
 
 	return user, nil

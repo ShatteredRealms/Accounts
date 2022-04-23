@@ -4,23 +4,22 @@ import (
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
+	"github.com/ShatteredRealms/Accounts/test/factory"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
 	"golang.org/x/crypto/bcrypt"
 )
 
+var (
+	f = factory.NewFactory()
+)
+
 var _ = Describe("User", func() {
 	var user model.User
 
 	BeforeEach(func() {
-		user = model.User{
-			FirstName: helpers.RandString(10),
-			LastName:  helpers.RandString(10),
-			Email:     helpers.RandString(10) + "@test.com",
-			Password:  helpers.RandString(10),
-			Username:  helpers.RandString(10),
-		}
+		user = f.UserFactory().BaseUser()
 	})
 
 	Context("Login", func() {
@@ -49,7 +48,6 @@ var _ = Describe("User", func() {
 		})
 
 		AfterEach(func() {
-			user.Validate()
 			if expectedError == nil {
 				Expect(user.Login(password)).To(BeNil())
 			} else {
