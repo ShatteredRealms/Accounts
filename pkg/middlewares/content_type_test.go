@@ -39,8 +39,7 @@ var _ = Describe("ContentType", func() {
 
 		It("should fail without media type application/json", func() {
 			req, _ = http.NewRequest(method, "/"+path, nil)
-			//expectedStatus = http.StatusUnsupportedMediaType
-			expectedStatus = http.StatusOK
+			expectedStatus = http.StatusUnsupportedMediaType
 		})
 	})
 

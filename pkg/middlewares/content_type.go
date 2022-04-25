@@ -11,16 +11,15 @@ import (
 // aborted and an HTTP status Unsupported Media Type (415) is returned with more JSON information regarding the error.
 func ContentTypeMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
-		switch c.Request.Method {
-		case http.MethodPatch:
-		case http.MethodPost:
-		case http.MethodPut:
-			if c.Request.Header.Get("Content-Type") != "application/json" {
-				c.JSON(http.StatusUnsupportedMediaType, model.NewGenericUnsupportedMediaResponse(c))
-				c.Abort()
-				return
-			}
-		default:
+		if (c.Request.Method == http.MethodPatch ||
+			c.Request.Method == http.MethodPost ||
+			c.Request.Method == http.MethodPut) &&
+			c.Request.Header.Get("Content-Type") != "application/json" {
+
+			c.JSON(http.StatusUnsupportedMediaType, model.NewGenericUnsupportedMediaResponse(c))
+			c.Abort()
+			return
+		} else {
 			c.Next()
 		}
 	}

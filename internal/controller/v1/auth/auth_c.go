@@ -1,12 +1,11 @@
 package auth
 
 import (
-	"encoding/json"
 	"fmt"
+	"github.com/ShatteredRealms/Accounts/internal/controller/v1/ctrlutil"
 	"github.com/ShatteredRealms/Accounts/internal/log"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
-	"io/ioutil"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -43,37 +42,17 @@ func NewAuthController(u service.UserService, jwt service.JWTService, logger log
 // @Failure 401 {object} model.ResponseModel Explanation of why
 // @Router /api/v1/login [post]
 func (a authController) Login(c *gin.Context) {
-	reqBody := c.Request.Body
-	if reqBody == nil {
-		resp := model.NewBadRequestResponse(c, "Payload missing")
-		c.JSON(resp.StatusCode, resp)
-		return
-	}
-
-	body, err := ioutil.ReadAll(reqBody)
-	if err != nil {
-		resp := model.NewInternalServerResponse(c, "unable to process payload")
-		c.JSON(resp.StatusCode, resp)
-		return
-	}
-
 	login := model.LoginRequest{}
-	err = json.Unmarshal(body, &login)
+	err := ctrlutil.ParseBody(c, &login)
 	if err != nil {
-		resp := model.NewBadRequestResponse(c, "Expected JSON body")
-		c.JSON(resp.StatusCode, resp)
 		return
 	}
 
-	if login.Email == "" {
-		resp := model.NewBadRequestResponse(c, "Missing email")
-		c.JSON(resp.StatusCode, resp)
+	if !ctrlutil.ValidatePresent(c, "email", login.Email) {
 		return
 	}
 
-	if login.Password == "" {
-		resp := model.NewBadRequestResponse(c, "Missing password")
-		c.JSON(resp.StatusCode, resp)
+	if !ctrlutil.ValidatePresent(c, "password", login.Password) {
 		return
 	}
 
@@ -123,25 +102,9 @@ func (a authController) Login(c *gin.Context) {
 // @Failure 401 {object} model.ResponseModel Explanation of why
 // @Router /api/v1/register [post]
 func (a authController) Register(c *gin.Context) {
-	reqBody := c.Request.Body
-	if reqBody == nil {
-		resp := model.NewBadRequestResponse(c, "Payload missing")
-		c.JSON(resp.StatusCode, resp)
-		return
-	}
-
-	body, err := ioutil.ReadAll(reqBody)
-	if err != nil {
-		resp := model.NewInternalServerResponse(c, "unable to process payload")
-		c.JSON(resp.StatusCode, resp)
-		return
-	}
-
 	register := model.RegisterRequest{}
-	err = json.Unmarshal(body, &register)
+	err := ctrlutil.ParseBody(c, &register)
 	if err != nil {
-		resp := model.NewBadRequestResponse(c, "Expected JSON body")
-		c.JSON(resp.StatusCode, resp)
 		return
 	}
 
@@ -150,6 +113,7 @@ func (a authController) Register(c *gin.Context) {
 		LastName:  register.LastName,
 		Email:     register.Email,
 		Password:  register.Password,
+		Username:  register.Username,
 	}
 
 	user, err = a.userService.Create(user)

@@ -18,6 +18,7 @@ type UserRepository interface {
 	WithTrx(*gorm.DB) UserRepository
 	FindById(id uint) model.User
 	FindByEmail(email string) model.User
+	FindByUsername(username string) model.User
 	Migrate() error
 	All() []model.User
 }
@@ -39,6 +40,11 @@ func (u userRepository) Create(user model.User) (model.User, error) {
 		return user, fmt.Errorf("email is already taken")
 	}
 
+	conflict = u.FindByUsername(user.Username)
+	if conflict.Exists() {
+		return user, fmt.Errorf("username is already taken")
+	}
+
 	hashedPass, err := bcrypt.GenerateFromPassword([]byte(user.Password), 0)
 	if err != nil {
 		return user, fmt.Errorf("password: %w", err)
@@ -51,7 +57,17 @@ func (u userRepository) Create(user model.User) (model.User, error) {
 }
 
 func (u userRepository) Save(user model.User) (model.User, error) {
-	return user, u.DB.Save(&u).Error
+	conflict := u.FindByEmail(user.Email)
+	if conflict.Exists() && user.ID != conflict.ID {
+		return user, fmt.Errorf("email is already taken")
+	}
+
+	conflict = u.FindByUsername(user.Username)
+	if conflict.Exists() && user.ID != conflict.ID {
+		return user, fmt.Errorf("username is already taken")
+	}
+
+	return user, u.DB.Save(&user).Error
 }
 
 func (u userRepository) WithTrx(trx *gorm.DB) UserRepository {
@@ -72,6 +88,12 @@ func (u userRepository) FindById(id uint) model.User {
 func (u userRepository) FindByEmail(email string) model.User {
 	var user model.User
 	u.DB.Where("email=?", email).Find(&user)
+	return user
+}
+
+func (u userRepository) FindByUsername(username string) model.User {
+	var user model.User
+	u.DB.Where("username=?", username).Find(&user)
 	return user
 }
 
