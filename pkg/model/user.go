@@ -176,11 +176,11 @@ func (u *User) validateUsername() error {
 	}
 
 	if len(u.Username) < MinUsernameLength {
-		return fmt.Errorf("username less than minimum password length of %d", MinUsernameLength)
+		return fmt.Errorf("username less than minimum length of %d", MinUsernameLength)
 	}
 
 	if len(u.Username) > MaxUsernameLength {
-		return fmt.Errorf("username exeeded maximum password length of %d", MaxUsernameLength)
+		return fmt.Errorf("username exeeded maximum length of %d", MaxUsernameLength)
 	}
 
 	return nil

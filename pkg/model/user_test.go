@@ -78,9 +78,34 @@ var _ = Describe("User", func() {
 			expectedError = fmt.Errorf("first name cannot be empty")
 		})
 
+		It(fmt.Sprintf("should require a first name with max length %d", model.MaxFirstNameLength), func() {
+			user.FirstName = helpers.RandString(model.MaxFirstNameLength + 1)
+			expectedError = fmt.Errorf("first name cannot be longer than 50 characters")
+		})
+
 		It("should require a last name", func() {
 			user.LastName = ""
 			expectedError = fmt.Errorf("last name cannot be empty")
+		})
+
+		It(fmt.Sprintf("should require a last name with max length %d", model.MaxLastNameLength), func() {
+			user.LastName = helpers.RandString(model.MaxLastNameLength + 1)
+			expectedError = fmt.Errorf("last name cannot be longer than 50 characters")
+		})
+
+		It("should require a username", func() {
+			user.Username = ""
+			expectedError = fmt.Errorf("cannot create a user without a username")
+		})
+
+		It(fmt.Sprintf("should require a username with min length %d", model.MinUsernameLength), func() {
+			user.Username = helpers.RandString(model.MinUsernameLength - 1)
+			expectedError = fmt.Errorf("username less than minimum length of 3")
+		})
+
+		It(fmt.Sprintf("should require a username with max length %d", model.MaxUsernameLength), func() {
+			user.Username = helpers.RandString(model.MaxUsernameLength + 1)
+			expectedError = fmt.Errorf("username exeeded maximum length of 25")
 		})
 
 		It("should require a password", func() {
@@ -112,6 +137,74 @@ var _ = Describe("User", func() {
 			} else {
 				Expect(user.Validate()).To(Equal(expectedError))
 			}
+		})
+	})
+
+	Context("UpdateInfo", func() {
+		var existingUser model.User
+
+		BeforeEach(func() {
+			existingUser = f.UserFactory().User()
+		})
+
+		It("should require a valid first name", func() {
+			user.FirstName = helpers.RandString(model.MaxFirstNameLength + 1)
+			Expect(existingUser.UpdateInfo(user)).NotTo(BeNil())
+		})
+
+		It("should require a valid last name", func() {
+			user.LastName = helpers.RandString(model.MaxLastNameLength + 1)
+			Expect(existingUser.UpdateInfo(user)).NotTo(BeNil())
+		})
+
+		It("should require a valid username", func() {
+			user.Username = helpers.RandString(model.MaxUsernameLength + 1)
+			Expect(existingUser.UpdateInfo(user)).NotTo(BeNil())
+		})
+
+		It("should require a valid email", func() {
+			user.Email = "a"
+			Expect(existingUser.UpdateInfo(user)).NotTo(BeNil())
+		})
+
+		It("should update first name only if only that is given", func() {
+			user = model.User{
+				FirstName: helpers.RandString(10),
+			}
+			Expect(existingUser.UpdateInfo(user)).To(BeNil())
+			Expect(existingUser.FirstName).To(Equal(user.FirstName))
+		})
+
+		It("should update last name only if only that is given", func() {
+			user = model.User{
+				LastName: helpers.RandString(10),
+			}
+			Expect(existingUser.UpdateInfo(user)).To(BeNil())
+			Expect(existingUser.LastName).To(Equal(user.LastName))
+		})
+
+		It("should update username only if only that is given", func() {
+			user = model.User{
+				Username: helpers.RandString(10),
+			}
+			Expect(existingUser.UpdateInfo(user)).To(BeNil())
+			Expect(existingUser.Username).To(Equal(user.Username))
+		})
+
+		It("should update email only if only that is given", func() {
+			user = model.User{
+				Email: helpers.RandString(10) + "@example.com",
+			}
+			Expect(existingUser.UpdateInfo(user)).To(BeNil())
+			Expect(existingUser.Email).To(Equal(user.Email))
+		})
+
+		It("should update first name, last name, username and email if given valid info", func() {
+			Expect(existingUser.UpdateInfo(user)).To(BeNil())
+			Expect(existingUser.FirstName).To(Equal(user.FirstName))
+			Expect(existingUser.LastName).To(Equal(user.LastName))
+			Expect(existingUser.Username).To(Equal(user.Username))
+			Expect(existingUser.Email).To(Equal(user.Email))
 		})
 	})
 
