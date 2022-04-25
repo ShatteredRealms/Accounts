@@ -7,7 +7,7 @@ import (
 )
 
 // CORSMiddleWare is the middleware function that sets the necessary headers to setup CORS configuration. If a OPTION
-// reuest is made, then the handle aborts and returns with HTTP status No Content (204)
+// request is made, then the handle aborts and returns with HTTP status No Content (204)
 func CORSMiddleWare() gin.HandlerFunc {
 	return func(c *gin.Context) {
 		if len(c.Request.Header.Get("Origin")) == 0 {
@@ -24,7 +24,6 @@ func CORSMiddleWare() gin.HandlerFunc {
 
 		if c.Request.Method == http.MethodOptions {
 			c.AbortWithStatus(http.StatusNoContent)
-			// c.AbortWithStatus(http.StatusOK)
 		} else {
 			c.Next()
 		}
