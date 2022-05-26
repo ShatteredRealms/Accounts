@@ -79,10 +79,19 @@ build-image:
 aws-docker-login:
 	aws ecr get-login-password | docker login --username AWS --password-stdin $(SRO_BASE_REGISTRY)
 
-push: build-image
+push-prod: build-image
 	docker tag sro-accounts $(REGISTRY):latest
 	docker tag sro-accounts $(REGISTRY):$(BASE_VERSION)
 	docker tag sro-accounts $(REGISTRY):$(BASE_VERSION)-$(time)
 	docker push $(REGISTRY):latest
 	docker push $(REGISTRY):$(BASE_VERSION)
 	docker push $(REGISTRY):$(BASE_VERSION)-$(time)
+
+push: push-dev
+push-%: build-image
+	docker tag sro-accounts $(REGISTRY)/$*:latest
+	docker tag sro-accounts $(REGISTRY)/$*:$(BASE_VERSION)
+	docker tag sro-accounts $(REGISTRY)/$*:$(BASE_VERSION)-$(time)
+	docker push $(REGISTRY)/$*:latest
+	docker push $(REGISTRY)/$*:$(BASE_VERSION)
+	docker push $(REGISTRY)/$*:$(BASE_VERSION)-$(time)
