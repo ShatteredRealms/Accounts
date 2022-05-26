@@ -63,16 +63,19 @@ jobs:
     - name: Build, tag, and push image to Amazon Dev ECR
       if: github.ref == 'refs/heads/dev'
       id: build-dev-image
+      working-directory: ./build
       run: make push-dev
       
     - name: Build, tag, and push image to Amazon Dev ECR
       if: github.ref == 'refs/heads/qa'
       id: build-qa-image
+      working-directory: ./build
       run: make push-qa
       
     - name: Build, tag, and push image to Amazon Dev ECR
       if: github.ref == 'refs/heads/main'
       id: build-image
+      working-directory: ./build
       run: make push-prod
 
 #     - name: Deploy dev to cluster
