@@ -1,0 +1,17 @@
+apiVersion: networking.istio.io/v1beta1
+kind: VirtualService
+metadata:
+  name: accounts
+spec:
+  hosts:
+    - "api.shatteredrealmsonline.com"
+  http:
+    - route:
+        - destination:
+            host: accounts
+            port:
+              number: 8080
+          weight: 100
+      match:
+        - uri:
+            prefix: /accounts

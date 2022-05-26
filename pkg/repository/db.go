@@ -27,7 +27,7 @@ type DBConnections struct {
 
 // DBConnect Initializes the connection to the database
 func DBConnect(connections DBConnections) (*gorm.DB, error) {
-	fmt.Printf("Connecting to: %s", connections.Master.PostgresDSN())
+	fmt.Printf("Connecting to: %s\n", connections.Master.PostgresDSN())
 	sqlDB, err := sql.Open("postgres", connections.Master.PostgresDSN())
 	if err != nil {
 		return nil, fmt.Errorf("open: %w", err)
@@ -71,7 +71,7 @@ func (c Connection) MySQLDSN() string {
 
 func (c Connection) PostgresDSN() string {
 	// refer https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
-	return fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable",
+	return fmt.Sprintf("postgresql://%s:%s@%s:%s/%s?sslmode=disable",
 		c.Username,
 		c.Password,
 		c.Host,

@@ -13,6 +13,7 @@ env:
 jobs:
   test:
     runs-on: ubuntu-latest
+    name: Test
     steps:
     - uses: actions/checkout@v3
 
@@ -63,17 +64,23 @@ jobs:
     - name: Build, tag, and push image to Amazon Dev ECR
       if: github.ref == 'refs/heads/dev'
       id: build-dev-image
-      run: make push-dev
+      run: |
+        cd ./build
+        make push-dev
       
     - name: Build, tag, and push image to Amazon Dev ECR
       if: github.ref == 'refs/heads/qa'
       id: build-qa-image
-      run: make push-qa
+      run: |
+        cd ./build
+        make push-dev
       
     - name: Build, tag, and push image to Amazon Dev ECR
       if: github.ref == 'refs/heads/main'
       id: build-image
-      run: make push-prod
+      run: |
+        cd ./build
+        make push-dev
 
 #     - name: Deploy dev to cluster
 #       uses: kodermax/kubectl-aws-eks@master
