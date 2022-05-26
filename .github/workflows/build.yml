@@ -2,9 +2,12 @@ name: Build CI
 
 on:
   push:
-    branches: '**'
+    branches:
+      - main
+      - qa
+      - dev
   pull_request:
-    branches: '**'
+    branches: [ '**' ]
 
 env:
   BASE_REGISTRY: ${{ secrets.BASE_REGISTRY }}
