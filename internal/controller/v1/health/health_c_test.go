@@ -3,7 +3,7 @@ package health_test
 import (
 	"encoding/json"
 	"github.com/ShatteredRealms/Accounts/internal/controller/v1/health"
-	"github.com/ShatteredRealms/Accounts/pkg/helpers"
+	"github.com/ShatteredRealms/GoUtils/pkg/helpers"
 	"net/http"
 
 	. "github.com/onsi/ginkgo/v2"

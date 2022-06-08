@@ -4,8 +4,10 @@ import (
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/internal/controller/v1/ctrlutil"
 	"github.com/ShatteredRealms/Accounts/internal/log"
-	"github.com/ShatteredRealms/Accounts/pkg/model"
-	"github.com/ShatteredRealms/Accounts/pkg/service"
+	accountModel "github.com/ShatteredRealms/Accounts/pkg/model"
+	accountService "github.com/ShatteredRealms/Accounts/pkg/service"
+	"github.com/ShatteredRealms/GoUtils/pkg/model"
+	"github.com/ShatteredRealms/GoUtils/pkg/service"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -18,12 +20,12 @@ type AuthController interface {
 }
 
 type authController struct {
-	userService service.UserService
+	userService accountService.UserService
 	jwtService  service.JWTService
 	logger      log.LoggerService
 }
 
-func NewAuthController(u service.UserService, jwt service.JWTService, logger log.LoggerService) AuthController {
+func NewAuthController(u accountService.UserService, jwt service.JWTService, logger log.LoggerService) AuthController {
 	return authController{
 		userService: u,
 		jwtService:  jwt,
@@ -42,7 +44,7 @@ func NewAuthController(u service.UserService, jwt service.JWTService, logger log
 // @Failure 401 {object} model.ResponseModel Explanation of why
 // @Router /api/v1/login [post]
 func (a authController) Login(c *gin.Context) {
-	login := model.LoginRequest{}
+	login := accountModel.LoginRequest{}
 	err := ctrlutil.ParseBody(c, &login)
 	if err != nil {
 		return
@@ -76,7 +78,7 @@ func (a authController) Login(c *gin.Context) {
 		c.JSON(resp.StatusCode, resp)
 		return
 	}
-	data := model.LoginResponse{
+	data := accountModel.LoginResponse{
 		Email:     user.Email,
 		Username:  user.Username,
 		FirstName: user.FirstName,
@@ -102,13 +104,13 @@ func (a authController) Login(c *gin.Context) {
 // @Failure 401 {object} model.ResponseModel Explanation of why
 // @Router /api/v1/register [post]
 func (a authController) Register(c *gin.Context) {
-	register := model.RegisterRequest{}
+	register := accountModel.RegisterRequest{}
 	err := ctrlutil.ParseBody(c, &register)
 	if err != nil {
 		return
 	}
 
-	user := model.User{
+	user := accountModel.User{
 		FirstName: register.FirstName,
 		LastName:  register.LastName,
 		Email:     register.Email,
@@ -138,7 +140,7 @@ func (a authController) Register(c *gin.Context) {
 	}
 
 	a.logger.LogRegisterRequest()
-	data := model.LoginResponse{
+	data := accountModel.LoginResponse{
 		ID:        user.ID,
 		FirstName: user.FirstName,
 		LastName:  user.LastName,
@@ -150,14 +152,14 @@ func (a authController) Register(c *gin.Context) {
 	c.JSON(resp.StatusCode, resp)
 }
 
-func (a *authController) tokenForUser(u *model.User) (t string, err error) {
+func (a *authController) tokenForUser(u *accountModel.User) (t string, err error) {
 	claims := jwt.MapClaims{
 		"sub":         u.ID,
 		"given_name":  u.FirstName,
 		"family_name": u.LastName,
 		"email":       u.Email,
 	}
-	t, err = a.jwtService.Create(time.Hour, claims)
+	t, err = a.jwtService.Create(time.Hour, "shatteredrealmsonline.com/accounts/v1", claims)
 
 	return t, err
 }

@@ -3,11 +3,12 @@ module github.com/ShatteredRealms/Accounts
 go 1.17
 
 require (
+	github.com/ShatteredRealms/GoUtils v1.0.0
 	github.com/gin-gonic/gin v1.7.7
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/lib/pq v1.10.2
-	github.com/onsi/ginkgo/v2 v2.1.1
-	github.com/onsi/gomega v1.18.1
+	github.com/onsi/ginkgo/v2 v2.1.4
+	github.com/onsi/gomega v1.19.0
 	github.com/prometheus/client_golang v1.12.1
 	github.com/swaggo/gin-swagger v1.4.0
 	github.com/unrolled/secure v1.0.9
@@ -60,10 +61,10 @@ require (
 	github.com/prometheus/procfs v0.7.3 // indirect
 	github.com/swaggo/swag v1.7.9 // indirect
 	github.com/ugorji/go/codec v1.2.6 // indirect
-	golang.org/x/net v0.0.0-20220127200216-cd36cc0744dd // indirect
-	golang.org/x/sys v0.0.0-20220128215802-99c3d69c2c27 // indirect
+	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
+	golang.org/x/sys v0.0.0-20220319134239-a9b59b0215f8 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/tools v0.1.10 // indirect
 	google.golang.org/protobuf v1.27.1 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

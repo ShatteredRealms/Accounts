@@ -2,9 +2,9 @@ package model_test
 
 import (
 	"fmt"
-	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/test/factory"
+	"github.com/ShatteredRealms/GoUtils/pkg/helpers"
 
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"

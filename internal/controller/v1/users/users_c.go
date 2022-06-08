@@ -6,6 +6,7 @@ import (
 	"github.com/ShatteredRealms/Accounts/internal/log"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
+	utilModel "github.com/ShatteredRealms/GoUtils/pkg/model"
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
@@ -43,7 +44,7 @@ func (u usersController) ListAll(c *gin.Context) {
 		}
 	}
 
-	c.JSON(200, model.NewSuccessResponse(c, "Success", users))
+	c.JSON(200, utilModel.NewSuccessResponse(c, "Success", users))
 }
 
 func (u usersController) GetUser(c *gin.Context) {
@@ -61,7 +62,7 @@ func (u usersController) GetUser(c *gin.Context) {
 		ID:        user.ID,
 	}
 
-	c.JSON(http.StatusOK, model.NewSuccessResponse(c, "Success", parsedUser))
+	c.JSON(http.StatusOK, utilModel.NewSuccessResponse(c, "Success", parsedUser))
 }
 
 func (u usersController) EditUser(c *gin.Context) {
@@ -78,17 +79,17 @@ func (u usersController) EditUser(c *gin.Context) {
 
 	err = user.UpdateInfo(userInfo)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.NewBadRequestResponse(c, err.Error()))
+		c.JSON(http.StatusBadRequest, utilModel.NewBadRequestResponse(c, err.Error()))
 		return
 	}
 
 	user, err = u.userService.Save(user)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, model.NewBadRequestResponse(c, err.Error()))
+		c.JSON(http.StatusInternalServerError, utilModel.NewBadRequestResponse(c, err.Error()))
 		return
 	}
 
-	c.JSON(http.StatusOK, model.NewSuccessResponse(c, "Success", nil))
+	c.JSON(http.StatusOK, utilModel.NewSuccessResponse(c, "Success", nil))
 }
 
 func (u usersController) getUserFromParam(c *gin.Context, param string) (model.User, error) {
@@ -96,14 +97,14 @@ func (u usersController) getUserFromParam(c *gin.Context, param string) (model.U
 	id := uint(id64)
 
 	if err != nil {
-		c.JSON(http.StatusBadRequest, model.NewBadRequestResponse(c, "Invalid user ID"))
+		c.JSON(http.StatusBadRequest, utilModel.NewBadRequestResponse(c, "Invalid user ID"))
 		return model.User{}, err
 	}
 
 	user := u.userService.FindById(id)
 	if !user.Exists() {
 		err := fmt.Errorf("user not found")
-		c.JSON(http.StatusNotFound, model.NewBadRequestResponse(c, err.Error()))
+		c.JSON(http.StatusNotFound, utilModel.NewBadRequestResponse(c, err.Error()))
 		return model.User{}, err
 	}
 
