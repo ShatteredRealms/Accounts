@@ -6,10 +6,11 @@ import (
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/internal/controller/v1/users"
 	"github.com/ShatteredRealms/Accounts/internal/log"
-	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/test/factory"
 	"github.com/ShatteredRealms/Accounts/test/mocks"
+	"github.com/ShatteredRealms/GoUtils/pkg/helpers"
+	utilModel "github.com/ShatteredRealms/GoUtils/pkg/model"
 	"github.com/gin-gonic/gin"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -47,7 +48,7 @@ var _ = Describe("Users controller", func() {
 		It("should return all users", func() {
 			usersController.ListAll(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Data).NotTo(BeNil())
 		})
@@ -57,7 +58,7 @@ var _ = Describe("Users controller", func() {
 		It("should return nil if no user given", func() {
 			usersController.GetUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			data := resp.Data
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(data).To(BeNil())
@@ -75,7 +76,7 @@ var _ = Describe("Users controller", func() {
 			usersController = users.NewUserController(userService, logger)
 			usersController.GetUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Data).NotTo(BeNil())
 		})
@@ -85,7 +86,7 @@ var _ = Describe("Users controller", func() {
 		It("should fail on invalid request body", func() {
 			usersController.EditUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Errors).NotTo(BeNil())
 		})
@@ -99,7 +100,7 @@ var _ = Describe("Users controller", func() {
 			usersController = users.NewUserController(userService, logger)
 			usersController.EditUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Errors).NotTo(BeNil())
 		})
@@ -122,7 +123,7 @@ var _ = Describe("Users controller", func() {
 			usersController = users.NewUserController(userService, logger)
 			usersController.EditUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Errors).NotTo(BeNil())
 		})
@@ -143,7 +144,7 @@ var _ = Describe("Users controller", func() {
 			usersController = users.NewUserController(userService, logger)
 			usersController.EditUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Errors).NotTo(BeNil())
 		})
@@ -166,7 +167,7 @@ var _ = Describe("Users controller", func() {
 			usersController = users.NewUserController(userService, logger)
 			usersController.EditUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Errors).NotTo(BeNil())
 		})
@@ -188,7 +189,7 @@ var _ = Describe("Users controller", func() {
 			usersController = users.NewUserController(userService, logger)
 			usersController.EditUser(c)
 
-			var resp model.ResponseModel
+			var resp utilModel.ResponseModel
 			Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 			Expect(resp.Errors).To(BeNil())
 		})

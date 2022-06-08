@@ -3,7 +3,7 @@ package option_test
 import (
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/internal/option"
-	"github.com/ShatteredRealms/Accounts/pkg/helpers"
+	"github.com/ShatteredRealms/GoUtils/pkg/helpers"
 	"os"
 	"reflect"
 

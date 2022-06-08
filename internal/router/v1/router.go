@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/internal/log"
 	"github.com/ShatteredRealms/Accounts/internal/option"
-	"github.com/ShatteredRealms/Accounts/pkg/middlewares"
-	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"github.com/ShatteredRealms/Accounts/pkg/repository"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
+	"github.com/ShatteredRealms/GoUtils/pkg/middlewares"
+	"github.com/ShatteredRealms/GoUtils/pkg/model"
+	utilService "github.com/ShatteredRealms/GoUtils/pkg/service"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -37,7 +38,7 @@ func InitRouter(db *gorm.DB, config option.Config, logger log.LoggerService) (*g
 	}
 
 	userService := service.NewUserService(userRepository)
-	jwtService, err := service.NewJWTService(config)
+	jwtService, err := utilService.NewJWTService(*config.KeyDir.Value)
 	if err != nil {
 		return nil, fmt.Errorf("jwt service: %w", err)
 	}
