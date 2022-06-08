@@ -3,7 +3,7 @@ package ctrlutil
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/ShatteredRealms/Accounts/pkg/model"
+	"github.com/ShatteredRealms/GoUtils/pkg/model"
 	"github.com/gin-gonic/gin"
 	"io/ioutil"
 )

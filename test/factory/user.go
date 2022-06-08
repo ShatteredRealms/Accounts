@@ -1,8 +1,8 @@
 package factory
 
 import (
-	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
+	"github.com/ShatteredRealms/GoUtils/pkg/helpers"
 	"time"
 )
 

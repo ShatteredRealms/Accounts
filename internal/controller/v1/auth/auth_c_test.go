@@ -6,9 +6,11 @@ import (
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/internal/controller/v1/auth"
 	"github.com/ShatteredRealms/Accounts/internal/log"
-	"github.com/ShatteredRealms/Accounts/pkg/helpers"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
-	"github.com/ShatteredRealms/Accounts/test/mocks"
+	accountMocks "github.com/ShatteredRealms/Accounts/test/mocks"
+	"github.com/ShatteredRealms/GoUtils/pkg/helpers"
+	"github.com/ShatteredRealms/GoUtils/pkg/mocks"
+	utilModels "github.com/ShatteredRealms/GoUtils/pkg/model"
 	"github.com/gin-gonic/gin"
 	. "github.com/onsi/ginkgo/v2"
 	. "github.com/onsi/gomega"
@@ -18,14 +20,14 @@ import (
 )
 
 var _ = Describe("Auth controller ", func() {
-	var userService mocks.UserService
+	var userService accountMocks.UserService
 	var authController auth.AuthController
 	var w *httptest.ResponseRecorder
 	var c *gin.Context
 	l := log.NewLogger(log.Error, "")
 
 	BeforeEach(func() {
-		userService = mocks.UserService{
+		userService = accountMocks.UserService{
 			CreateReturn:      nil,
 			SaveReturn:        nil,
 			FindByEmailReturn: model.User{},
@@ -51,7 +53,7 @@ var _ = Describe("Auth controller ", func() {
 			It("should error when the body is empty", func() {
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -62,7 +64,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", mocks.ErrReader(1))
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusInternalServerError))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -73,7 +75,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte{}))
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -89,7 +91,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -103,7 +105,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -117,7 +119,7 @@ var _ = Describe("Auth controller ", func() {
 				authController = auth.NewAuthController(userService, mocks.JWT(true), l)
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusUnauthorized))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -132,7 +134,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusUnauthorized))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -151,7 +153,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusUnauthorized))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -170,7 +172,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusInternalServerError))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -189,7 +191,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Login(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusOK))
 				Expect(resp.Data.(map[string]interface{})["token"]).To(Equal("ok"))
@@ -202,7 +204,7 @@ var _ = Describe("Auth controller ", func() {
 			It("should error when the body is empty", func() {
 				authController.Register(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -213,7 +215,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", mocks.ErrReader(1))
 				authController.Register(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusInternalServerError))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -224,7 +226,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", bytes.NewBuffer([]byte{}))
 				authController.Register(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusBadRequest))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -251,7 +253,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Register(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusOK))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -265,7 +267,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Register(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusInternalServerError))
 				Expect(resp.Errors[0]).ToNot(BeNil())
@@ -279,7 +281,7 @@ var _ = Describe("Auth controller ", func() {
 				c.Request, _ = http.NewRequest(http.MethodPost, "/", &buf)
 				authController.Register(c)
 
-				resp := model.ResponseModel{}
+				resp := utilModels.ResponseModel{}
 				Expect(json.NewDecoder(w.Body).Decode(&resp)).ShouldNot(HaveOccurred())
 				Expect(w.Code).To(Equal(http.StatusOK))
 				Expect(resp.Data.(map[string]interface{})["token"]).To(Equal("ok"))
