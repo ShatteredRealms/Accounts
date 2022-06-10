@@ -21,24 +21,41 @@ func NewServer(
 	ctx := context.Background()
 
 	grpcServer := grpc.NewServer()
-
-	authenticationServiceServer := NewAuthenticationServiceServer(u, jwt, logger)
-	accountspb.RegisterAuthenticationServiceServer(grpcServer, authenticationServiceServer)
-
-	authorizationServiceServer := NewAuthorizationServiceServer(u, logger)
-	accountspb.RegisterAuthorizationServiceServer(grpcServer, authorizationServiceServer)
-
-	userServiceServer := NewUserServiceServer(u, logger)
-	accountspb.RegisterUserServiceServer(grpcServer, userServiceServer)
-
 	gwmux := runtime.NewServeMux()
 	opts := []grpc.DialOption{
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
+
+	authenticationServiceServer := NewAuthenticationServiceServer(u, jwt, logger)
+	accountspb.RegisterAuthenticationServiceServer(grpcServer, authenticationServiceServer)
 	err := accountspb.RegisterAuthenticationServiceHandlerFromEndpoint(
 		ctx,
 		gwmux,
-		":8080",
+		config.Address(),
+		opts,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	authorizationServiceServer := NewAuthorizationServiceServer(u, logger)
+	accountspb.RegisterAuthorizationServiceServer(grpcServer, authorizationServiceServer)
+	err = accountspb.RegisterAuthorizationServiceHandlerFromEndpoint(
+		ctx,
+		gwmux,
+		config.Address(),
+		opts,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	userServiceServer := NewUserServiceServer(u, logger)
+	accountspb.RegisterUserServiceServer(grpcServer, userServiceServer)
+	err = accountspb.RegisterUserServiceHandlerFromEndpoint(
+		ctx,
+		gwmux,
+		config.Address(),
 		opts,
 	)
 	if err != nil {

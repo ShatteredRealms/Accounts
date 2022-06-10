@@ -36,7 +36,7 @@ func main() {
 
 	resp, err := client.GetAll(ctx, &emptypb.Empty{})
 
-	log.Printf("Message received:\n")
+	log.Printf("GetAll Message received:\n")
 	for _, v := range resp.Users {
 		log.Printf("    username: %s\n", v.Username)
 	}

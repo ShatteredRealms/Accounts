@@ -20,11 +20,13 @@ const (
 // User Database model for a User
 type User struct {
 	gorm.Model
-	FirstName string `gorm:"not null" json:"first_name"`
-	LastName  string `gorm:"not null" json:"last_name"`
-	Username  string `gorm:"not null" json:"username"`
-	Email     string `gorm:"not null;unique" json:"email"`
-	Password  string `gorm:"not null" json:"password"`
+	FirstName   string       `gorm:"not null" json:"first_name"`
+	LastName    string       `gorm:"not null" json:"last_name"`
+	Username    string       `gorm:"not null" json:"username"`
+	Email       string       `gorm:"not null;unique" json:"email"`
+	Password    string       `gorm:"not null" json:"password"`
+	Roles       []Role       `json:"roles"`
+	Permissions []Permission `json:"permissions"`
 }
 
 // Validate Checks if all user data fields are valid.
