@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package sro.characterspb;
+
+option go_package = "pkg/characterspb";
+
+import "google/api/annotations.proto";
+
+service CharacterService {
+  rpc Create(CreateCharacterMessage) returns (EmptyResponse) {
+    option (google.api.http) = {
+      post: "/v1/{user_id}"
+      body: "*"
+    };
+  }
+}
+
+message CreateCharacterMessage {
+  string name       = 1;
+  uint64 user_id    = 2;
+  uint64 breed_id   = 3;
+  uint64 gender_id  = 4;
+  uint64 realm_id   = 5;
+}
+
+message EmptyResponse {}

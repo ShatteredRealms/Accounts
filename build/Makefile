@@ -49,6 +49,11 @@ SRO_REGISTRY ?= $(SRO_BASE_REGISTRY)/sro
 REGISTRY = $(SRO_REGISTRY)/accounts
 time=$(shell date +%s)
 
+PROTO_DIR=$(ROOT_DIR)/api
+PROTO_THIRD_PARTY_DIR=$(ROOT_DIR)/third_party
+
+PROTO_FILES = authentication.proto authorization.proto user.proto
+
 #   _____                    _
 #  |_   _|                  | |
 #    | | __ _ _ __ __ _  ___| |_ ___
@@ -95,3 +100,19 @@ push-%: build-image
 	docker push $(REGISTRY)/$*:latest
 	docker push $(REGISTRY)/$*:$(BASE_VERSION)
 	docker push $(REGISTRY)/$*:$(BASE_VERSION)-$(time)
+
+.PHONY: clean-protos protos $(PROTO_FILES)
+
+clean-protos:
+	rm -rf "$(ROOT_DIR)/pkg/accountspb"
+
+protos: $(PROTO_FILES)
+
+$(PROTO_FILES):
+	protoc "$(PROTO_DIR)/$@" \
+		-I "$(PROTO_DIR)" \
+		-I "$(PROTO_THIRD_PARTY_DIR)" \
+		--go_out="$(ROOT_DIR)" \
+		--go-grpc_out="$(ROOT_DIR)" \
+		--grpc-gateway_out="$(ROOT_DIR)" \
+		--grpc-gateway_opt logtostderr=true

@@ -1,0 +1,58 @@
+syntax = "proto3";
+package sro.accountspb;
+option go_package = "pkg/accountspb";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service UserService {
+  rpc GetAll(google.protobuf.Empty) returns (GetAllUsersResponse) {
+    option (google.api.http) = {
+      get: "/v1/users"
+    };
+  }
+
+  rpc Get(GetUserMessage) returns (GetUserResponse) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}"
+    };
+  }
+
+  rpc Edit(UserDetails) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/v1/users/{user_id}"
+      body: "*"
+    };
+  }
+}
+
+message GetUserMessage {
+  uint64 user_id = 1;
+}
+
+message UserMessage {
+  uint64 id = 1;
+  string email = 2;
+  string username = 3;
+}
+
+message GetUserResponse {
+  uint64 id = 1;
+  string email = 2;
+  string username = 3;
+  string first_name = 4;
+  string last_name = 5;
+}
+
+message GetAllUsersResponse {
+  repeated UserMessage users = 1;
+}
+
+message UserDetails {
+  uint64 user_id = 1;
+  string email = 2;
+  string password = 3;
+  string username = 4;
+  string first_name = 5;
+  string last_name = 6;
+}

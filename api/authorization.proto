@@ -1,0 +1,46 @@
+syntax = "proto3";
+package sro.accountspb;
+option go_package = "pkg/accountspb";
+
+import "google/api/annotations.proto";
+import "google/protobuf/empty.proto";
+
+service AuthorizationService {
+  rpc GetAuthorization(GetAuthorizationRequest) returns (AuthorizationMessage) {
+    option (google.api.http) = {
+      get: "/v1/users/{user_id}/authorization"
+    };
+  }
+
+  rpc SetAuthorization(AuthorizationMessage) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/users/{user_id}/authorization"
+      body: "*"
+    };
+  }
+}
+
+message GetAuthorizationRequest {
+  uint64 user_id = 1;
+}
+
+message UserPermission {
+  // The gRPC method the permission is for
+  string method = 1;
+
+  // If true then the permission is allowed for other users and for itself. If false, then it is only allowed for
+  // making calls to or for itself.
+  bool onOther = 2;
+}
+
+message UserRole {
+  uint64 id = 1;
+  string name = 2;
+  repeated UserPermission permissions = 3;
+}
+
+message AuthorizationMessage {
+  uint64 user_id = 1;
+  repeated UserRole roles = 2;
+  repeated UserPermission permissions = 3;
+}
