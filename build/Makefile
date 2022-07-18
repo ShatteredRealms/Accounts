@@ -106,7 +106,7 @@ push-%: build-image
 clean-protos:
 	rm -rf "$(ROOT_DIR)/pkg/accountspb"
 
-protos: $(PROTO_FILES)
+protos: clean-protos $(PROTO_FILES)
 
 $(PROTO_FILES):
 	protoc "$(PROTO_DIR)/$@" \

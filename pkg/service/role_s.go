@@ -7,16 +7,16 @@ import (
 )
 
 type RoleService interface {
-	Create(model.Role) (model.Role, error)
-	Save(model.Role) (model.Role, error)
+	Create(*model.Role) (*model.Role, error)
+	Save(*model.Role) (*model.Role, error)
 
-	All() []model.Role
-	FindById(id uint) model.Role
-	FindByName(name string) model.Role
+	All() []*model.Role
+	FindById(id uint) *model.Role
+	FindByName(name string) *model.Role
 
 	WithTrx(*gorm.DB) RoleService
 
-	FindAll() []model.Role
+	FindAll() []*model.Role
 }
 
 type roleService struct {
@@ -29,23 +29,23 @@ func NewRoleService(r repository.RoleRepository) RoleService {
 	}
 }
 
-func (s roleService) Create(role model.Role) (model.Role, error) {
+func (s roleService) Create(role *model.Role) (*model.Role, error) {
 	return s.roleRepository.Create(role)
 }
 
-func (s roleService) Save(role model.Role) (model.Role, error) {
+func (s roleService) Save(role *model.Role) (*model.Role, error) {
 	return s.roleRepository.Save(role)
 }
 
-func (s roleService) All() []model.Role {
+func (s roleService) All() []*model.Role {
 	return s.roleRepository.All()
 }
 
-func (s roleService) FindById(id uint) model.Role {
+func (s roleService) FindById(id uint) *model.Role {
 	return s.roleRepository.FindById(id)
 }
 
-func (s roleService) FindByName(name string) model.Role {
+func (s roleService) FindByName(name string) *model.Role {
 	return s.roleRepository.FindByName(name)
 }
 
@@ -54,6 +54,6 @@ func (s roleService) WithTrx(db *gorm.DB) RoleService {
 	return s
 }
 
-func (s roleService) FindAll() []model.Role {
+func (s roleService) FindAll() []*model.Role {
 	return s.roleRepository.All()
 }

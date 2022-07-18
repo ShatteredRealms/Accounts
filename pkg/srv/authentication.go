@@ -34,7 +34,7 @@ func (s *authenticationServiceServer) Register(
 	ctx context.Context,
 	message *accountspb.RegisterAccountMessage,
 ) (*emptypb.Empty, error) {
-	user := accountModel.User{
+	user := &accountModel.User{
 		FirstName: message.FirstName,
 		LastName:  message.LastName,
 		Username:  message.Username,
@@ -69,7 +69,7 @@ func (s *authenticationServiceServer) Login(
 		return nil, status.Error(codes.Unauthenticated, "Invalid username or password")
 	}
 
-	token, err := s.tokenForUser(&user)
+	token, err := s.tokenForUser(user)
 	if err != nil {
 		s.logger.Log(log.Error, fmt.Sprintf("error signing jwt: %v", err))
 		return nil, status.Error(codes.Internal, "Error signing validation token")

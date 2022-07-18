@@ -7,12 +7,12 @@ import (
 )
 
 type UserService interface {
-	Create(model.User) (model.User, error)
-	Save(model.User) (model.User, error)
+	Create(*model.User) (*model.User, error)
+	Save(*model.User) (*model.User, error)
 	WithTrx(*gorm.DB) UserService
-	FindById(id uint) model.User
-	FindByEmail(email string) model.User
-	FindAll() []model.User
+	FindById(id uint) *model.User
+	FindByEmail(email string) *model.User
+	FindAll() []*model.User
 }
 
 type userService struct {
@@ -25,11 +25,11 @@ func NewUserService(r repository.UserRepository) UserService {
 	}
 }
 
-func (u userService) Create(user model.User) (model.User, error) {
+func (u userService) Create(user *model.User) (*model.User, error) {
 	return u.userRepository.Create(user)
 }
 
-func (u userService) Save(user model.User) (model.User, error) {
+func (u userService) Save(user *model.User) (*model.User, error) {
 	return u.userRepository.Save(user)
 }
 
@@ -38,14 +38,14 @@ func (u userService) WithTrx(trx *gorm.DB) UserService {
 	return u
 }
 
-func (u userService) FindById(id uint) model.User {
+func (u userService) FindById(id uint) *model.User {
 	return u.userRepository.FindById(id)
 }
 
-func (u userService) FindByEmail(email string) model.User {
+func (u userService) FindByEmail(email string) *model.User {
 	return u.userRepository.FindByEmail(email)
 }
 
-func (u userService) FindAll() []model.User {
+func (u userService) FindAll() []*model.User {
 	return u.userRepository.All()
 }

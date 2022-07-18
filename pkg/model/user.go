@@ -20,13 +20,13 @@ const (
 // User Database model for a User
 type User struct {
 	gorm.Model
-	FirstName   string       `gorm:"not null" json:"first_name"`
-	LastName    string       `gorm:"not null" json:"last_name"`
-	Username    string       `gorm:"not null" json:"username"`
-	Email       string       `gorm:"not null;unique" json:"email"`
-	Password    string       `gorm:"not null" json:"password"`
-	Roles       []Role       `json:"roles"`
-	Permissions []Permission `json:"permissions"`
+	FirstName   string        `gorm:"not null" json:"first_name"`
+	LastName    string        `gorm:"not null" json:"last_name"`
+	Username    string        `gorm:"not null" json:"username"`
+	Email       string        `gorm:"not null;unique" json:"email"`
+	Password    string        `gorm:"not null" json:"password"`
+	Roles       []*Role       `gorm:"many2many:user_roles" json:"roles"`
+	Permissions []*Permission `gorm:"many2many:user_permissions" json:"permissions"`
 }
 
 // Validate Checks if all user data fields are valid.
@@ -72,7 +72,7 @@ func (u *User) Login(password string) error {
 }
 
 func (u *User) Exists() bool {
-	return u.ID != 0
+	return u != nil && u.ID != 0
 }
 
 // UpdateInfo Updates the info of the user if the fields are present and valid. If any field is present but not valid

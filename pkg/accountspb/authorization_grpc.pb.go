@@ -24,7 +24,8 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AuthorizationServiceClient interface {
 	GetAuthorization(ctx context.Context, in *GetAuthorizationRequest, opts ...grpc.CallOption) (*AuthorizationMessage, error)
-	SetAuthorization(ctx context.Context, in *AuthorizationMessage, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	AddAuthorization(ctx context.Context, in *AuthorizationMessage, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RemoveAuthorization(ctx context.Context, in *AuthorizationMessage, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type authorizationServiceClient struct {
@@ -44,9 +45,18 @@ func (c *authorizationServiceClient) GetAuthorization(ctx context.Context, in *G
 	return out, nil
 }
 
-func (c *authorizationServiceClient) SetAuthorization(ctx context.Context, in *AuthorizationMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+func (c *authorizationServiceClient) AddAuthorization(ctx context.Context, in *AuthorizationMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/sro.accountspb.AuthorizationService/SetAuthorization", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sro.accountspb.AuthorizationService/AddAuthorization", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *authorizationServiceClient) RemoveAuthorization(ctx context.Context, in *AuthorizationMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/sro.accountspb.AuthorizationService/RemoveAuthorization", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -58,7 +68,8 @@ func (c *authorizationServiceClient) SetAuthorization(ctx context.Context, in *A
 // for forward compatibility
 type AuthorizationServiceServer interface {
 	GetAuthorization(context.Context, *GetAuthorizationRequest) (*AuthorizationMessage, error)
-	SetAuthorization(context.Context, *AuthorizationMessage) (*emptypb.Empty, error)
+	AddAuthorization(context.Context, *AuthorizationMessage) (*emptypb.Empty, error)
+	RemoveAuthorization(context.Context, *AuthorizationMessage) (*emptypb.Empty, error)
 	mustEmbedUnimplementedAuthorizationServiceServer()
 }
 
@@ -69,8 +80,11 @@ type UnimplementedAuthorizationServiceServer struct {
 func (UnimplementedAuthorizationServiceServer) GetAuthorization(context.Context, *GetAuthorizationRequest) (*AuthorizationMessage, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAuthorization not implemented")
 }
-func (UnimplementedAuthorizationServiceServer) SetAuthorization(context.Context, *AuthorizationMessage) (*emptypb.Empty, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method SetAuthorization not implemented")
+func (UnimplementedAuthorizationServiceServer) AddAuthorization(context.Context, *AuthorizationMessage) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddAuthorization not implemented")
+}
+func (UnimplementedAuthorizationServiceServer) RemoveAuthorization(context.Context, *AuthorizationMessage) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveAuthorization not implemented")
 }
 func (UnimplementedAuthorizationServiceServer) mustEmbedUnimplementedAuthorizationServiceServer() {}
 
@@ -103,20 +117,38 @@ func _AuthorizationService_GetAuthorization_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AuthorizationService_SetAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AuthorizationService_AddAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AuthorizationMessage)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AuthorizationServiceServer).SetAuthorization(ctx, in)
+		return srv.(AuthorizationServiceServer).AddAuthorization(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/sro.accountspb.AuthorizationService/SetAuthorization",
+		FullMethod: "/sro.accountspb.AuthorizationService/AddAuthorization",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AuthorizationServiceServer).SetAuthorization(ctx, req.(*AuthorizationMessage))
+		return srv.(AuthorizationServiceServer).AddAuthorization(ctx, req.(*AuthorizationMessage))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AuthorizationService_RemoveAuthorization_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizationMessage)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AuthorizationServiceServer).RemoveAuthorization(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/sro.accountspb.AuthorizationService/RemoveAuthorization",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AuthorizationServiceServer).RemoveAuthorization(ctx, req.(*AuthorizationMessage))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -133,8 +165,12 @@ var AuthorizationService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _AuthorizationService_GetAuthorization_Handler,
 		},
 		{
-			MethodName: "SetAuthorization",
-			Handler:    _AuthorizationService_SetAuthorization_Handler,
+			MethodName: "AddAuthorization",
+			Handler:    _AuthorizationService_AddAuthorization_Handler,
+		},
+		{
+			MethodName: "RemoveAuthorization",
+			Handler:    _AuthorizationService_RemoveAuthorization_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

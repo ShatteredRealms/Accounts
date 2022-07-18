@@ -12,9 +12,16 @@ service AuthorizationService {
     };
   }
 
-  rpc SetAuthorization(AuthorizationMessage) returns (google.protobuf.Empty) {
+  rpc AddAuthorization(AuthorizationMessage) returns (google.protobuf.Empty) {
     option (google.api.http) = {
-      post: "/v1/users/{user_id}/authorization"
+      post: "/v1/users/{user_id}/authorization/add"
+      body: "*"
+    };
+  }
+
+  rpc RemoveAuthorization(AuthorizationMessage) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/users/{user_id}/authorization/remove"
       body: "*"
     };
   }
@@ -30,7 +37,7 @@ message UserPermission {
 
   // If true then the permission is allowed for other users and for itself. If false, then it is only allowed for
   // making calls to or for itself.
-  bool onOther = 2;
+  bool other = 2;
 }
 
 message UserRole {

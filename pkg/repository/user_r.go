@@ -13,14 +13,14 @@ type userRepository struct {
 }
 
 type UserRepository interface {
-	Create(model.User) (model.User, error)
-	Save(model.User) (model.User, error)
+	Create(*model.User) (*model.User, error)
+	Save(*model.User) (*model.User, error)
 	WithTrx(*gorm.DB) UserRepository
-	FindById(id uint) model.User
-	FindByEmail(email string) model.User
-	FindByUsername(username string) model.User
+	FindById(id uint) *model.User
+	FindByEmail(email string) *model.User
+	FindByUsername(username string) *model.User
 	Migrate() error
-	All() []model.User
+	All() []*model.User
 }
 
 func NewUserRepository(db *gorm.DB) UserRepository {
@@ -29,7 +29,7 @@ func NewUserRepository(db *gorm.DB) UserRepository {
 	}
 }
 
-func (u userRepository) Create(user model.User) (model.User, error) {
+func (u userRepository) Create(user *model.User) (*model.User, error) {
 	err := user.Validate()
 	if err != nil {
 		return user, err
@@ -56,7 +56,7 @@ func (u userRepository) Create(user model.User) (model.User, error) {
 	return user, err
 }
 
-func (u userRepository) Save(user model.User) (model.User, error) {
+func (u userRepository) Save(user *model.User) (*model.User, error) {
 	conflict := u.FindByEmail(user.Email)
 	if conflict.Exists() && user.ID != conflict.ID {
 		return user, fmt.Errorf("email is already taken")
@@ -79,20 +79,20 @@ func (u userRepository) WithTrx(trx *gorm.DB) UserRepository {
 	return u
 }
 
-func (u userRepository) FindById(id uint) model.User {
-	var user model.User
+func (u userRepository) FindById(id uint) *model.User {
+	var user *model.User
 	u.DB.Where("id=?", id).Find(&user)
 	return user
 }
 
-func (u userRepository) FindByEmail(email string) model.User {
-	var user model.User
+func (u userRepository) FindByEmail(email string) *model.User {
+	var user *model.User
 	u.DB.Where("email=?", email).Find(&user)
 	return user
 }
 
-func (u userRepository) FindByUsername(username string) model.User {
-	var user model.User
+func (u userRepository) FindByUsername(username string) *model.User {
+	var user *model.User
 	u.DB.Where("username=?", username).Find(&user)
 	return user
 }
@@ -101,8 +101,8 @@ func (u userRepository) Migrate() error {
 	return u.DB.AutoMigrate(&model.User{})
 }
 
-func (u userRepository) All() []model.User {
-	var users []model.User
+func (u userRepository) All() []*model.User {
+	var users []*model.User
 	u.DB.Find(&users)
 	return users
 }

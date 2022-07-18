@@ -12,6 +12,15 @@ type LoggerService interface {
 	// Log Write message and log level to screen if maximum log level isn't exceeded
 	Log(level logLevel, message string)
 
+	// Logf Format message and Log
+	Logf(level logLevel, message string, format ...interface{})
+
+	// Info Writes Info message to screen with Log
+	Info(message string)
+
+	// Infof Format message and Info Log
+	Infof(message string, format ...interface{})
+
 	// LogLoginRequest Sends metrics to prometheus for login request
 	LogLoginRequest()
 
@@ -67,6 +76,18 @@ func (l logger) Log(level logLevel, message string) {
 	if level.Level <= l.maxLogLevel {
 		fmt.Printf("%s | %s: %s\n", l.formattedTime(), level.Name, message)
 	}
+}
+
+func (l logger) Logf(level logLevel, message string, format ...interface{}) {
+	l.Log(level, fmt.Sprintf(message, format))
+}
+
+func (l logger) Info(message string) {
+	l.Log(Info, message)
+}
+
+func (l logger) Infof(message string, format ...interface{}) {
+	l.Log(Info, fmt.Sprintf(message, format))
 }
 
 // LogLoginRequest Increments the prometheus metric counter for successful login requests
