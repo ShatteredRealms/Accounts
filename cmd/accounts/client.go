@@ -2,7 +2,7 @@ package main
 
 import (
 	"context"
-	"github.com/ShatteredRealms/Accounts/pkg/accountspb"
+	"github.com/ShatteredRealms/Accounts/pkg/pb"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/protobuf/types/known/emptypb"
@@ -20,7 +20,7 @@ func main() {
 	}
 	defer conn.Close()
 
-	client := accountspb.NewUserServiceClient(conn)
+	client := pb.NewUserServiceClient(conn)
 	//client2 := accountspb.NewAuthenticationServiceClient(conn)
 	ctx := context.Background()
 

@@ -51,7 +51,7 @@ var (
 // NewLogger Creates a new logger
 func NewLogger(max logLevel, format string) LoggerService {
 	if format == "" {
-		format = "2012-11-01 15:04:05"
+		format = "2006-01-02 15:04:05"
 	}
 
 	return logger{
@@ -74,7 +74,7 @@ func NewLogger(max logLevel, format string) LoggerService {
 // greater than or equal to the given log level
 func (l logger) Log(level logLevel, message string) {
 	if level.Level <= l.maxLogLevel {
-		fmt.Printf("%s | %s: %s\n", l.formattedTime(), level.Name, message)
+		fmt.Printf("%s [%s]: %s\n", l.formattedTime(), level.Name, message)
 	}
 }
 

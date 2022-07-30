@@ -23,8 +23,10 @@ import (
 func grpcHandlerFunc(grpcServer *grpc.Server, otherHandler http.Handler) http.Handler {
 	return h2c.NewHandler(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		if r.ProtoMajor == 2 && strings.Contains(r.Header.Get("Content-Type"), "application/grpc") {
+			fmt.Println("aaaaa")
 			grpcServer.ServeHTTP(w, r)
 		} else {
+			fmt.Println("bbbbb")
 			otherHandler.ServeHTTP(w, r)
 		}
 	}), &http2.Server{})
@@ -89,7 +91,12 @@ func main() {
 		Handler: grpcHandlerFunc(grpcServer, gwmux),
 	}
 
+	logger.Info("Server starting")
+
 	err = server.Serve(lis)
+
+	logger.Info("Server stopped")
+
 	if err != nil {
 		logger.Log(log.Error, fmt.Sprintf("listen: %v", err))
 		os.Exit(1)
