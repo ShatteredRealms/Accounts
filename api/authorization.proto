@@ -1,6 +1,6 @@
 syntax = "proto3";
-package sro.accountspb;
-option go_package = "pkg/accountspb";
+package sro.accounts;
+option go_package = "pkg/pb";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
@@ -25,6 +25,58 @@ service AuthorizationService {
       body: "*"
     };
   }
+
+  rpc GetRoles(google.protobuf.Empty) returns (UserRoles) {
+    option (google.api.http) = {
+      get: "/v1/authorization/roles"
+    };
+  }
+
+  rpc CreateRole(UserRole) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/authorization/roles"
+      body: "*"
+    };
+  }
+
+  rpc EditRole(UserRole) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/v1/authorization/roles/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeleteRole(UserRole) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/authorization/roles/{id}"
+    };
+  }
+
+  rpc GetPermissions(google.protobuf.Empty) returns (UserPermissions) {
+    option (google.api.http) = {
+      get: "/v1/authorization/permission"
+    };
+  }
+
+  rpc CreatePermission(UserPermission) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      post: "/v1/authorization/permissions"
+      body: "*"
+    };
+  }
+
+  rpc EditPermission(UserPermission) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      put: "/v1/authorization/permissions/{id}"
+      body: "*"
+    };
+  }
+
+  rpc DeletePermission(UserPermission) returns (google.protobuf.Empty) {
+    option (google.api.http) = {
+      delete: "/v1/authorization/permissions/{id}"
+    };
+  }
 }
 
 message GetAuthorizationRequest {
@@ -32,18 +84,29 @@ message GetAuthorizationRequest {
 }
 
 message UserPermission {
+  // Unique ID for the permission
+  uint64 id = 1;
+
   // The gRPC method the permission is for
-  string method = 1;
+  string method = 2;
 
   // If true then the permission is allowed for other users and for itself. If false, then it is only allowed for
   // making calls to or for itself.
-  bool other = 2;
+  bool other = 3;
+}
+
+message UserPermissions {
+  repeated UserPermission permissions = 1;
 }
 
 message UserRole {
   uint64 id = 1;
   string name = 2;
   repeated UserPermission permissions = 3;
+}
+
+message UserRoles {
+  repeated UserRole roles = 1;
 }
 
 message AuthorizationMessage {

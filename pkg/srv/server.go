@@ -4,7 +4,7 @@ import (
 	"context"
 	"github.com/ShatteredRealms/Accounts/internal/log"
 	"github.com/ShatteredRealms/Accounts/internal/option"
-	"github.com/ShatteredRealms/Accounts/pkg/accountspb"
+	"github.com/ShatteredRealms/Accounts/pkg/pb"
 	accountService "github.com/ShatteredRealms/Accounts/pkg/service"
 	"github.com/ShatteredRealms/GoUtils/pkg/service"
 	"github.com/grpc-ecosystem/grpc-gateway/v2/runtime"
@@ -27,8 +27,8 @@ func NewServer(
 	}
 
 	authenticationServiceServer := NewAuthenticationServiceServer(u, jwt, logger)
-	accountspb.RegisterAuthenticationServiceServer(grpcServer, authenticationServiceServer)
-	err := accountspb.RegisterAuthenticationServiceHandlerFromEndpoint(
+	pb.RegisterAuthenticationServiceServer(grpcServer, authenticationServiceServer)
+	err := pb.RegisterAuthenticationServiceHandlerFromEndpoint(
 		ctx,
 		gwmux,
 		config.Address(),
@@ -39,8 +39,8 @@ func NewServer(
 	}
 
 	authorizationServiceServer := NewAuthorizationServiceServer(u, logger)
-	accountspb.RegisterAuthorizationServiceServer(grpcServer, authorizationServiceServer)
-	err = accountspb.RegisterAuthorizationServiceHandlerFromEndpoint(
+	pb.RegisterAuthorizationServiceServer(grpcServer, authorizationServiceServer)
+	err = pb.RegisterAuthorizationServiceHandlerFromEndpoint(
 		ctx,
 		gwmux,
 		config.Address(),
@@ -51,8 +51,20 @@ func NewServer(
 	}
 
 	userServiceServer := NewUserServiceServer(u, logger)
-	accountspb.RegisterUserServiceServer(grpcServer, userServiceServer)
-	err = accountspb.RegisterUserServiceHandlerFromEndpoint(
+	pb.RegisterUserServiceServer(grpcServer, userServiceServer)
+	err = pb.RegisterUserServiceHandlerFromEndpoint(
+		ctx,
+		gwmux,
+		config.Address(),
+		opts,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	healthServiceServer := NewHealthServiceServer()
+	pb.RegisterHealthServiceServer(grpcServer, healthServiceServer)
+	err = pb.RegisterHealthServiceHandlerFromEndpoint(
 		ctx,
 		gwmux,
 		config.Address(),

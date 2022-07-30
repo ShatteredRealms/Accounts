@@ -4,8 +4,8 @@ import (
 	"context"
 	"fmt"
 	"github.com/ShatteredRealms/Accounts/internal/log"
-	"github.com/ShatteredRealms/Accounts/pkg/accountspb"
 	accountModel "github.com/ShatteredRealms/Accounts/pkg/model"
+	"github.com/ShatteredRealms/Accounts/pkg/pb"
 	accountService "github.com/ShatteredRealms/Accounts/pkg/service"
 	"github.com/ShatteredRealms/GoUtils/pkg/service"
 	"github.com/golang-jwt/jwt"
@@ -16,7 +16,7 @@ import (
 )
 
 type authenticationServiceServer struct {
-	accountspb.UnimplementedAuthenticationServiceServer
+	pb.UnimplementedAuthenticationServiceServer
 	userService accountService.UserService
 	jwtService  service.JWTService
 	logger      log.LoggerService
@@ -32,7 +32,7 @@ func NewAuthenticationServiceServer(u accountService.UserService, jwt service.JW
 
 func (s *authenticationServiceServer) Register(
 	ctx context.Context,
-	message *accountspb.RegisterAccountMessage,
+	message *pb.RegisterAccountMessage,
 ) (*emptypb.Empty, error) {
 	user := &accountModel.User{
 		FirstName: message.FirstName,
@@ -54,8 +54,8 @@ func (s *authenticationServiceServer) Register(
 
 func (s *authenticationServiceServer) Login(
 	ctx context.Context,
-	message *accountspb.LoginMessage,
-) (*accountspb.LoginResponse, error) {
+	message *pb.LoginMessage,
+) (*pb.LoginResponse, error) {
 	if message.Email == "" {
 		return nil, status.Error(codes.InvalidArgument, "Email cannot be empty")
 	}
@@ -77,7 +77,7 @@ func (s *authenticationServiceServer) Login(
 
 	s.logger.LogLoginRequest()
 
-	return &accountspb.LoginResponse{
+	return &pb.LoginResponse{
 		Token: token,
 	}, nil
 }

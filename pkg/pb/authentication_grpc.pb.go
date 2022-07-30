@@ -4,7 +4,7 @@
 // - protoc             v3.15.8
 // source: authentication.proto
 
-package accountspb
+package pb
 
 import (
 	context "context"
@@ -37,7 +37,7 @@ func NewAuthenticationServiceClient(cc grpc.ClientConnInterface) AuthenticationS
 
 func (c *authenticationServiceClient) Register(ctx context.Context, in *RegisterAccountMessage, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/sro.accountspb.AuthenticationService/Register", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sro.accounts.AuthenticationService/Register", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -46,7 +46,7 @@ func (c *authenticationServiceClient) Register(ctx context.Context, in *Register
 
 func (c *authenticationServiceClient) Login(ctx context.Context, in *LoginMessage, opts ...grpc.CallOption) (*LoginResponse, error) {
 	out := new(LoginResponse)
-	err := c.cc.Invoke(ctx, "/sro.accountspb.AuthenticationService/Login", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sro.accounts.AuthenticationService/Login", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -95,7 +95,7 @@ func _AuthenticationService_Register_Handler(srv interface{}, ctx context.Contex
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/sro.accountspb.AuthenticationService/Register",
+		FullMethod: "/sro.accounts.AuthenticationService/Register",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthenticationServiceServer).Register(ctx, req.(*RegisterAccountMessage))
@@ -113,7 +113,7 @@ func _AuthenticationService_Login_Handler(srv interface{}, ctx context.Context, 
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/sro.accountspb.AuthenticationService/Login",
+		FullMethod: "/sro.accounts.AuthenticationService/Login",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(AuthenticationServiceServer).Login(ctx, req.(*LoginMessage))
@@ -125,7 +125,7 @@ func _AuthenticationService_Login_Handler(srv interface{}, ctx context.Context, 
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var AuthenticationService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "sro.accountspb.AuthenticationService",
+	ServiceName: "sro.accounts.AuthenticationService",
 	HandlerType: (*AuthenticationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

@@ -4,7 +4,7 @@
 // - protoc             v3.15.8
 // source: user.proto
 
-package accountspb
+package pb
 
 import (
 	context "context"
@@ -38,7 +38,7 @@ func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
 
 func (c *userServiceClient) GetAll(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*GetAllUsersResponse, error) {
 	out := new(GetAllUsersResponse)
-	err := c.cc.Invoke(ctx, "/sro.accountspb.UserService/GetAll", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sro.accounts.UserService/GetAll", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -47,7 +47,7 @@ func (c *userServiceClient) GetAll(ctx context.Context, in *emptypb.Empty, opts 
 
 func (c *userServiceClient) Get(ctx context.Context, in *GetUserMessage, opts ...grpc.CallOption) (*GetUserResponse, error) {
 	out := new(GetUserResponse)
-	err := c.cc.Invoke(ctx, "/sro.accountspb.UserService/Get", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sro.accounts.UserService/Get", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -56,7 +56,7 @@ func (c *userServiceClient) Get(ctx context.Context, in *GetUserMessage, opts ..
 
 func (c *userServiceClient) Edit(ctx context.Context, in *UserDetails, opts ...grpc.CallOption) (*emptypb.Empty, error) {
 	out := new(emptypb.Empty)
-	err := c.cc.Invoke(ctx, "/sro.accountspb.UserService/Edit", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/sro.accounts.UserService/Edit", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,7 +109,7 @@ func _UserService_GetAll_Handler(srv interface{}, ctx context.Context, dec func(
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/sro.accountspb.UserService/GetAll",
+		FullMethod: "/sro.accounts.UserService/GetAll",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).GetAll(ctx, req.(*emptypb.Empty))
@@ -127,7 +127,7 @@ func _UserService_Get_Handler(srv interface{}, ctx context.Context, dec func(int
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/sro.accountspb.UserService/Get",
+		FullMethod: "/sro.accounts.UserService/Get",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Get(ctx, req.(*GetUserMessage))
@@ -145,7 +145,7 @@ func _UserService_Edit_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/sro.accountspb.UserService/Edit",
+		FullMethod: "/sro.accounts.UserService/Edit",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UserServiceServer).Edit(ctx, req.(*UserDetails))
@@ -157,7 +157,7 @@ func _UserService_Edit_Handler(srv interface{}, ctx context.Context, dec func(in
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "sro.accountspb.UserService",
+	ServiceName: "sro.accounts.UserService",
 	HandlerType: (*UserServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

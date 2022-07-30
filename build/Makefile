@@ -52,7 +52,7 @@ time=$(shell date +%s)
 PROTO_DIR=$(ROOT_DIR)/api
 PROTO_THIRD_PARTY_DIR=$(ROOT_DIR)/third_party
 
-PROTO_FILES = authentication.proto authorization.proto user.proto
+PROTO_FILES = authentication.proto authorization.proto user.proto health.proto
 
 #   _____                    _
 #  |_   _|                  | |
@@ -104,7 +104,7 @@ push-%: build-image
 .PHONY: clean-protos protos $(PROTO_FILES)
 
 clean-protos:
-	rm -rf "$(ROOT_DIR)/pkg/accountspb"
+	rm -rf "$(ROOT_DIR)/pkg/pb"
 
 protos: clean-protos $(PROTO_FILES)
 

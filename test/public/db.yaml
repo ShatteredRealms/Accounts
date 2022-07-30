@@ -1,0 +1,7 @@
+master:
+  host: 76.238.153.82
+  port: 5432
+  name: accounts
+  user: postgres
+  pass: iqB4cUnwKJ
+slaves: []

@@ -1,6 +1,6 @@
 syntax = "proto3";
-package sro.accountspb;
-option go_package = "pkg/accountspb";
+package sro.accounts;
+option go_package = "pkg/pb";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";

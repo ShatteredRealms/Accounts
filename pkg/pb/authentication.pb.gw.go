@@ -2,11 +2,11 @@
 // source: authentication.proto
 
 /*
-Package accountspb is a reverse proxy.
+Package pb is a reverse proxy.
 
 It translates gRPC into RESTful JSON APIs.
 */
-package accountspb
+package pb
 
 import (
 	"context"
@@ -112,7 +112,7 @@ func RegisterAuthenticationServiceHandlerServer(ctx context.Context, mux *runtim
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/sro.accountspb.AuthenticationService/Register", runtime.WithHTTPPathPattern("/v1/register"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/sro.accounts.AuthenticationService/Register", runtime.WithHTTPPathPattern("/v1/register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -136,7 +136,7 @@ func RegisterAuthenticationServiceHandlerServer(ctx context.Context, mux *runtim
 		ctx = grpc.NewContextWithServerTransportStream(ctx, &stream)
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/sro.accountspb.AuthenticationService/Login", runtime.WithHTTPPathPattern("/v1/login"))
+		ctx, err = runtime.AnnotateIncomingContext(ctx, mux, req, "/sro.accounts.AuthenticationService/Login", runtime.WithHTTPPathPattern("/v1/login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -199,7 +199,7 @@ func RegisterAuthenticationServiceHandlerClient(ctx context.Context, mux *runtim
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/sro.accountspb.AuthenticationService/Register", runtime.WithHTTPPathPattern("/v1/register"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/sro.accounts.AuthenticationService/Register", runtime.WithHTTPPathPattern("/v1/register"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return
@@ -220,7 +220,7 @@ func RegisterAuthenticationServiceHandlerClient(ctx context.Context, mux *runtim
 		defer cancel()
 		inboundMarshaler, outboundMarshaler := runtime.MarshalerForRequest(mux, req)
 		var err error
-		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/sro.accountspb.AuthenticationService/Login", runtime.WithHTTPPathPattern("/v1/login"))
+		ctx, err = runtime.AnnotateContext(ctx, mux, req, "/sro.accounts.AuthenticationService/Login", runtime.WithHTTPPathPattern("/v1/login"))
 		if err != nil {
 			runtime.HTTPError(ctx, mux, outboundMarshaler, w, req, err)
 			return

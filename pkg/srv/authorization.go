@@ -3,7 +3,7 @@ package srv
 import (
 	"context"
 	"github.com/ShatteredRealms/Accounts/internal/log"
-	"github.com/ShatteredRealms/Accounts/pkg/accountspb"
+	"github.com/ShatteredRealms/Accounts/pkg/pb"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -11,7 +11,7 @@ import (
 )
 
 type authorizationServiceServer struct {
-	accountspb.UnimplementedAuthorizationServiceServer
+	pb.UnimplementedAuthorizationServiceServer
 	userService service.UserService
 	logger      log.LoggerService
 }
@@ -25,31 +25,31 @@ func NewAuthorizationServiceServer(u service.UserService, logger log.LoggerServi
 
 func (s *authorizationServiceServer) GetAuthorization(
 	ctx context.Context,
-	message *accountspb.GetAuthorizationRequest,
-) (*accountspb.AuthorizationMessage, error) {
+	message *pb.GetAuthorizationRequest,
+) (*pb.AuthorizationMessage, error) {
 	user := s.userService.FindById(uint(message.UserId))
 	if !user.Exists() {
 		return nil, status.Error(codes.NotFound, "user not found")
 	}
 
-	roles := make([]*accountspb.UserRole, len(user.Roles))
+	roles := make([]*pb.UserRole, len(user.Roles))
 
 	for i, v := range user.Roles {
-		roles[i] = &accountspb.UserRole{
+		roles[i] = &pb.UserRole{
 			Id:   uint64(v.ID),
 			Name: v.Name,
 		}
 	}
 
-	permissions := make([]*accountspb.UserPermission, len(user.Permissions))
+	permissions := make([]*pb.UserPermission, len(user.Permissions))
 	for i, v := range user.Permissions {
-		permissions[i] = &accountspb.UserPermission{
+		permissions[i] = &pb.UserPermission{
 			Method: v.Method,
 			Other:  v.Other,
 		}
 	}
 
-	resp := &accountspb.AuthorizationMessage{
+	resp := &pb.AuthorizationMessage{
 		UserId:      message.UserId,
 		Roles:       roles,
 		Permissions: permissions,
@@ -60,7 +60,7 @@ func (s *authorizationServiceServer) GetAuthorization(
 
 func (s *authorizationServiceServer) SetAuthorization(
 	ctx context.Context,
-	message *accountspb.AuthorizationMessage,
+	message *pb.AuthorizationMessage,
 ) (*emptypb.Empty, error) {
 	return nil, nil
 }

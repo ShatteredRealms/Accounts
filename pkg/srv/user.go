@@ -3,8 +3,8 @@ package srv
 import (
 	"context"
 	"github.com/ShatteredRealms/Accounts/internal/log"
-	"github.com/ShatteredRealms/Accounts/pkg/accountspb"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
+	"github.com/ShatteredRealms/Accounts/pkg/pb"
 	"github.com/ShatteredRealms/Accounts/pkg/service"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -12,7 +12,7 @@ import (
 )
 
 type userServiceServer struct {
-	accountspb.UnimplementedUserServiceServer
+	pb.UnimplementedUserServiceServer
 	userService service.UserService
 	logger      log.LoggerService
 }
@@ -27,13 +27,13 @@ func NewUserServiceServer(u service.UserService, logger log.LoggerService) *user
 func (s *userServiceServer) GetAll(
 	ctx context.Context,
 	message *emptypb.Empty,
-) (*accountspb.GetAllUsersResponse, error) {
+) (*pb.GetAllUsersResponse, error) {
 	users := s.userService.FindAll()
-	resp := &accountspb.GetAllUsersResponse{
-		Users: []*accountspb.UserMessage{},
+	resp := &pb.GetAllUsersResponse{
+		Users: []*pb.UserMessage{},
 	}
 	for _, u := range users {
-		resp.Users = append(resp.Users, &accountspb.UserMessage{
+		resp.Users = append(resp.Users, &pb.UserMessage{
 			Id:       uint64(u.ID),
 			Email:    u.Email,
 			Username: u.Username,
@@ -45,14 +45,14 @@ func (s *userServiceServer) GetAll(
 
 func (s *userServiceServer) Get(
 	ctx context.Context,
-	message *accountspb.GetUserMessage,
-) (*accountspb.GetUserResponse, error) {
+	message *pb.GetUserMessage,
+) (*pb.GetUserResponse, error) {
 	user := s.userService.FindById(uint(message.UserId))
 	if !user.Exists() {
 		return nil, status.Error(codes.NotFound, "user not found")
 	}
 
-	return &accountspb.GetUserResponse{
+	return &pb.GetUserResponse{
 		Id:        uint64(user.ID),
 		Email:     user.Email,
 		Username:  user.Username,
@@ -63,7 +63,7 @@ func (s *userServiceServer) Get(
 
 func (s *userServiceServer) Edit(
 	ctx context.Context,
-	message *accountspb.UserDetails,
+	message *pb.UserDetails,
 ) (*emptypb.Empty, error) {
 	user := s.userService.FindById(uint(message.UserId))
 	if !user.Exists() {
