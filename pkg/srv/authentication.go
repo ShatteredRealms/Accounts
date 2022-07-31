@@ -78,7 +78,15 @@ func (s *authenticationServiceServer) Login(
 	s.logger.LogLoginRequest()
 
 	return &pb.LoginResponse{
-		Token: token,
+		Token:       token,
+		Id:          uint64(user.ID),
+		Email:       user.Email,
+		FirstName:   user.FirstName,
+		LastName:    user.LastName,
+		Username:    user.Username,
+		CreatedAt:   user.CreatedAt.String(),
+		Roles:       nil,
+		Permissions: nil,
 	}, nil
 }
 

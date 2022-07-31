@@ -4,6 +4,7 @@ option go_package = "pkg/pb";
 
 import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
+import "authorization.proto";
 
 service AuthenticationService {
   rpc Register(RegisterAccountMessage) returns (google.protobuf.Empty) {
@@ -28,6 +29,14 @@ message LoginMessage {
 
 message LoginResponse {
   string token = 1;
+  uint64 id = 2;
+  string email = 3;
+  string first_name = 4;
+  string last_name = 5;
+  string username = 6;
+  string created_at = 7;
+  UserRoles roles = 8;
+  UserPermissions permissions = 9;
 }
 
 message RegisterAccountMessage {
