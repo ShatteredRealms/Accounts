@@ -101,8 +101,6 @@ func main() {
 
 	err = server.Serve(lis)
 
-	logger.Info("Server stopped")
-
 	if err != nil {
 		logger.Log(log.Error, fmt.Sprintf("listen: %v", err))
 		os.Exit(1)
