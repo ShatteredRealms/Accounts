@@ -15,6 +15,8 @@ import (
 
 func NewServer(
 	u accountService.UserService,
+	p accountService.PermissionService,
+	r accountService.RoleService,
 	jwt service.JWTService,
 	logger log.LoggerService,
 	config option.Config,
@@ -26,7 +28,7 @@ func NewServer(
 	publicRPCs["/sro.accounts.AuthenticationService/Login"] = struct{}{}
 	publicRPCs["/sro.accounts.AuthenticationService/Register"] = struct{}{}
 
-	authInterceptor := interceptor.NewAuthInterceptor(jwt, publicRPCs, getPermissions())
+	authInterceptor := interceptor.NewAuthInterceptor(jwt, publicRPCs, getPermissions(p, u))
 
 	grpcServer := grpc.NewServer(
 		grpc.UnaryInterceptor(authInterceptor.Unary()),
@@ -38,21 +40,9 @@ func NewServer(
 		grpc.WithTransportCredentials(insecure.NewCredentials()),
 	}
 
-	authenticationServiceServer := NewAuthenticationServiceServer(u, jwt, logger)
+	authenticationServiceServer := NewAuthenticationServiceServer(u, jwt, p, logger)
 	pb.RegisterAuthenticationServiceServer(grpcServer, authenticationServiceServer)
 	err := pb.RegisterAuthenticationServiceHandlerFromEndpoint(
-		ctx,
-		gwmux,
-		config.Address(),
-		opts,
-	)
-	if err != nil {
-		return nil, nil, err
-	}
-
-	authorizationServiceServer := NewAuthorizationServiceServer(u, logger)
-	pb.RegisterAuthorizationServiceServer(grpcServer, authorizationServiceServer)
-	err = pb.RegisterAuthorizationServiceHandlerFromEndpoint(
 		ctx,
 		gwmux,
 		config.Address(),
@@ -86,11 +76,46 @@ func NewServer(
 		return nil, nil, err
 	}
 
+	authorizationServiceServer := NewAuthorizationServiceServer(u, p, r, logger)
+	pb.RegisterAuthorizationServiceServer(grpcServer, authorizationServiceServer)
+	err = pb.RegisterAuthorizationServiceHandlerFromEndpoint(
+		ctx,
+		gwmux,
+		config.Address(),
+		opts,
+	)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	// Compute the AllPermissions method once and save in memory
+	authorizationServiceServer.SetupAllPermissions(grpcServer.GetServiceInfo())
+
 	return grpcServer, gwmux, nil
 }
 
-func getPermissions() func(username string) map[string]struct{} {
-	return func(username string) map[string]struct{} {
-		return map[string]struct{}{}
+func getPermissions(
+	permissionService accountService.PermissionService,
+	userService accountService.UserService,
+) func(userID uint) map[string]bool {
+	return func(userID uint) map[string]bool {
+		user := userService.FindById(userID)
+		if user == nil || !user.Exists() {
+			return map[string]bool{}
+		}
+
+		resp := make(map[string]bool)
+
+		for _, role := range user.Roles {
+			for _, rolePermission := range permissionService.FindPermissionsForRoleID(role.ID) {
+				resp[rolePermission.Permission] = resp[rolePermission.Permission] || rolePermission.Other
+			}
+		}
+
+		for _, userPermission := range permissionService.FindPermissionsForUserID(userID) {
+			resp[userPermission.Permission] = resp[userPermission.Permission] || userPermission.Other
+		}
+
+		return resp
 	}
 }

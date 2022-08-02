@@ -17,16 +17,23 @@ import (
 
 type authenticationServiceServer struct {
 	pb.UnimplementedAuthenticationServiceServer
-	userService accountService.UserService
-	jwtService  service.JWTService
-	logger      log.LoggerService
+	userService       accountService.UserService
+	permissionService accountService.PermissionService
+	jwtService        service.JWTService
+	logger            log.LoggerService
 }
 
-func NewAuthenticationServiceServer(u accountService.UserService, jwt service.JWTService, logger log.LoggerService) *authenticationServiceServer {
+func NewAuthenticationServiceServer(
+	u accountService.UserService,
+	jwt service.JWTService,
+	permissionService accountService.PermissionService,
+	logger log.LoggerService,
+) *authenticationServiceServer {
 	return &authenticationServiceServer{
-		userService: u,
-		jwtService:  jwt,
-		logger:      logger,
+		userService:       u,
+		permissionService: permissionService,
+		jwtService:        jwt,
+		logger:            logger,
 	}
 }
 
@@ -78,24 +85,24 @@ func (s *authenticationServiceServer) Login(
 	s.logger.LogLoginRequest()
 
 	return &pb.LoginResponse{
-		Token:       token,
-		Id:          uint64(user.ID),
-		Email:       user.Email,
-		FirstName:   user.FirstName,
-		LastName:    user.LastName,
-		Username:    user.Username,
-		CreatedAt:   user.CreatedAt.String(),
-		Roles:       nil,
-		Permissions: nil,
+		Token:     token,
+		Id:        uint64(user.ID),
+		Email:     user.Email,
+		FirstName: user.FirstName,
+		LastName:  user.LastName,
+		Username:  user.Username,
+		CreatedAt: user.CreatedAt.String(),
+		Roles:     ConvertRolesWithoutPermissions(user.Roles),
 	}, nil
 }
 
 func (s *authenticationServiceServer) tokenForUser(u *accountModel.User) (t string, err error) {
 	claims := jwt.MapClaims{
-		"sub":         u.ID,
-		"given_name":  u.FirstName,
-		"family_name": u.LastName,
-		"email":       u.Email,
+		"sub":                u.ID,
+		"preferred_username": u.Username,
+		//"given_name":  u.FirstName,
+		//"family_name": u.LastName,
+		//"email":       u.Email,
 	}
 
 	t, err = s.jwtService.Create(time.Hour, "shatteredrealmsonline.com/accounts/v1", claims)

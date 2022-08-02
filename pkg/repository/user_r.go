@@ -15,6 +15,8 @@ type userRepository struct {
 type UserRepository interface {
 	Create(*model.User) (*model.User, error)
 	Save(*model.User) (*model.User, error)
+	AddToRole(*model.User, *model.Role) error
+	RemFromRole(*model.User, *model.Role) error
 	WithTrx(*gorm.DB) UserRepository
 	FindById(id uint) *model.User
 	FindByEmail(email string) *model.User
@@ -70,6 +72,14 @@ func (u userRepository) Save(user *model.User) (*model.User, error) {
 	return user, u.DB.Save(&user).Error
 }
 
+func (u userRepository) AddToRole(user *model.User, role *model.Role) error {
+	return u.DB.Model(&model.User{}).Where("user = ?", user).Association("Roles").Append(&role)
+}
+
+func (u userRepository) RemFromRole(user *model.User, role *model.Role) error {
+	return u.DB.Model(&model.User{}).Where("user = ?", user).Association("Roles").Delete(&role)
+}
+
 func (u userRepository) WithTrx(trx *gorm.DB) UserRepository {
 	if trx == nil {
 		return u
@@ -81,13 +91,13 @@ func (u userRepository) WithTrx(trx *gorm.DB) UserRepository {
 
 func (u userRepository) FindById(id uint) *model.User {
 	var user *model.User
-	u.DB.Where("id=?", id).Find(&user)
+	u.DB.Where("id=?", id).Preload("Roles").Find(&user)
 	return user
 }
 
 func (u userRepository) FindByEmail(email string) *model.User {
 	var user *model.User
-	u.DB.Where("email=?", email).Find(&user)
+	u.DB.Where("email=?", email).Preload("Roles").Find(&user)
 	return user
 }
 

@@ -12,8 +12,7 @@ const (
 
 type Role struct {
 	gorm.Model
-	Name        string       `gorm:"not null" json:"name"`
-	Permissions []Permission `gorm:"many2many:role_permissions;" json:"permissions"`
+	Name string `gorm:"not null" json:"name"`
 }
 
 func (r *Role) Validate() error {

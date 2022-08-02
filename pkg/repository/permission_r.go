@@ -1,21 +1,22 @@
 package repository
 
 import (
-	"fmt"
 	"github.com/ShatteredRealms/Accounts/pkg/model"
 	"gorm.io/gorm"
 )
 
 type PermissionRepository interface {
-	Create(*model.Permission) (*model.Permission, error)
-	Save(*model.Permission) (*model.Permission, error)
+	AddPermissionForUser(permission *model.UserPermission) error
+	AddPermissionForRole(permission *model.RolePermission) error
 
-	FindByMethodAndOtherOrCreate(method string, other bool) *model.Permission
+	RemPermissionForUser(permission *model.UserPermission) error
+	RemPermissionForRole(permission *model.RolePermission) error
 
-	All() []*model.Permission
-	FindById(id uint) *model.Permission
-	FindByMethodAndOther(method string, other bool) *model.Permission
-	FindWithMethod(name string) []*model.Permission
+	FindPermissionsForUserID(id uint) []*model.UserPermission
+	FindPermissionsForRoleID(id uint) []*model.RolePermission
+
+	ClearPermissionsForRole(id uint) error
+	ClearPermissionsForUser(id uint) error
 
 	WithTrx(*gorm.DB) PermissionRepository
 	Migrate() error
@@ -31,69 +32,40 @@ func NewPermissionRepository(db *gorm.DB) PermissionRepository {
 	}
 }
 
-func (r permissionRepository) FindByMethodAndOtherOrCreate(method string, other bool) *model.Permission {
-	permission := r.FindByMethodAndOther(method, other)
-	if permission != nil {
-		return permission
-	}
-
-	permission, err := r.Create(&model.Permission{
-		Method: method,
-		Other:  other,
-	})
-
-	if err != nil {
-		return nil
-	}
-
-	return permission
+func (r permissionRepository) AddPermissionForUser(permission *model.UserPermission) error {
+	return r.DB.Create(&permission).Error
 }
 
-func (r permissionRepository) FindByMethodAndOther(method string, other bool) *model.Permission {
-	var permission *model.Permission
-	r.DB.Where("method = ? AND other = ?", method, other).Find(&permission)
-	return permission
+func (r permissionRepository) AddPermissionForRole(permission *model.RolePermission) error {
+	return r.DB.Create(&permission).Error
 }
 
-func (r permissionRepository) FindWithMethod(name string) []*model.Permission {
-	var permissions []*model.Permission
-	r.DB.Where("method = ?", name).Find(&permissions)
+func (r permissionRepository) RemPermissionForUser(permission *model.UserPermission) error {
+	return r.DB.Delete(&permission).Error
+}
+
+func (r permissionRepository) RemPermissionForRole(permission *model.RolePermission) error {
+	return r.DB.Delete(&permission).Error
+}
+
+func (r permissionRepository) FindPermissionsForUserID(id uint) []*model.UserPermission {
+	var permissions []*model.UserPermission
+	r.DB.Where("user_id = ?", id).Find(&permissions)
 	return permissions
 }
 
-func (r permissionRepository) Create(permission *model.Permission) (*model.Permission, error) {
-	err := permission.Validate()
-	if err != nil {
-		return nil, err
-	}
-
-	conflictPermission := r.FindByMethodAndOther(permission.Method, permission.Other)
-	if conflictPermission != nil {
-		return nil, fmt.Errorf("permission with method and other state exists")
-	}
-
-	return permission, r.DB.Save(&permission).Error
-}
-
-func (r permissionRepository) Save(permission *model.Permission) (*model.Permission, error) {
-	conflictPermission := r.FindByMethodAndOther(permission.Method, permission.Other)
-	if conflictPermission != nil {
-		return nil, fmt.Errorf("permission with method and other state exists")
-	}
-
-	return permission, r.DB.Save(&permission).Error
-}
-
-func (r permissionRepository) All() []*model.Permission {
-	var permissions []*model.Permission
-	r.DB.Find(&permissions)
+func (r permissionRepository) FindPermissionsForRoleID(id uint) []*model.RolePermission {
+	var permissions []*model.RolePermission
+	r.DB.Where("role_id = ?", id).Find(&permissions)
 	return permissions
 }
 
-func (r permissionRepository) FindById(id uint) *model.Permission {
-	var permission *model.Permission
-	r.DB.Where("id = ?", id).Find(&permission)
-	return permission
+func (r permissionRepository) ClearPermissionsForRole(id uint) error {
+	return r.DB.Delete(&model.RolePermission{}, "role_id = ?", id).Error
+}
+
+func (r permissionRepository) ClearPermissionsForUser(id uint) error {
+	return r.DB.Delete(&model.UserPermission{}, "user_id = ?", id).Error
 }
 
 func (r permissionRepository) WithTrx(trx *gorm.DB) PermissionRepository {
@@ -106,5 +78,10 @@ func (r permissionRepository) WithTrx(trx *gorm.DB) PermissionRepository {
 }
 
 func (r permissionRepository) Migrate() error {
-	return r.DB.AutoMigrate(&model.Permission{})
+	err := r.DB.AutoMigrate(&model.UserPermission{})
+	if err != nil {
+		return err
+	}
+
+	return r.DB.AutoMigrate(&model.RolePermission{})
 }

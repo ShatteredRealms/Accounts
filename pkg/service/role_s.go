@@ -9,6 +9,8 @@ import (
 type RoleService interface {
 	Create(*model.Role) (*model.Role, error)
 	Save(*model.Role) (*model.Role, error)
+	Delete(*model.Role) error
+	Update(*model.Role) error
 
 	All() []*model.Role
 	FindById(id uint) *model.Role
@@ -35,6 +37,18 @@ func (s roleService) Create(role *model.Role) (*model.Role, error) {
 
 func (s roleService) Save(role *model.Role) (*model.Role, error) {
 	return s.roleRepository.Save(role)
+}
+
+func (s roleService) Delete(role *model.Role) error {
+	return s.roleRepository.Delete(role)
+}
+
+func (s roleService) Update(role *model.Role) error {
+	if len(role.Name) == 0 {
+		return nil
+	}
+
+	return s.roleRepository.Update(role)
 }
 
 func (s roleService) All() []*model.Role {

@@ -9,6 +9,8 @@ import (
 type UserService interface {
 	Create(*model.User) (*model.User, error)
 	Save(*model.User) (*model.User, error)
+	AddToRole(*model.User, *model.Role) error
+	RemFromRole(*model.User, *model.Role) error
 	WithTrx(*gorm.DB) UserService
 	FindById(id uint) *model.User
 	FindByEmail(email string) *model.User
@@ -31,6 +33,14 @@ func (u userService) Create(user *model.User) (*model.User, error) {
 
 func (u userService) Save(user *model.User) (*model.User, error) {
 	return u.userRepository.Save(user)
+}
+
+func (u userService) AddToRole(user *model.User, role *model.Role) error {
+	return u.userRepository.AddToRole(user, role)
+}
+
+func (u userService) RemFromRole(user *model.User, role *model.Role) error {
+	return u.userRepository.RemFromRole(user, role)
 }
 
 func (u userService) WithTrx(trx *gorm.DB) UserService {

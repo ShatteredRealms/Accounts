@@ -9,6 +9,8 @@ import (
 type RoleRepository interface {
 	Create(*model.Role) (*model.Role, error)
 	Save(*model.Role) (*model.Role, error)
+	Delete(*model.Role) error
+	Update(*model.Role) error
 
 	All() []*model.Role
 	FindById(id uint) *model.Role
@@ -35,11 +37,13 @@ func (r roleRepository) Create(role *model.Role) (*model.Role, error) {
 	}
 
 	existingRoleWithName := r.FindByName(role.Name)
-	if existingRoleWithName != nil {
+	if existingRoleWithName != nil && existingRoleWithName.ID != 0 {
 		return nil, fmt.Errorf("name already exists")
 	}
 
-	return role, r.DB.Save(&role).Error
+	err = r.DB.Create(&role).Error
+
+	return role, err
 }
 
 func (r roleRepository) Save(role *model.Role) (*model.Role, error) {
@@ -49,6 +53,14 @@ func (r roleRepository) Save(role *model.Role) (*model.Role, error) {
 	}
 
 	return role, r.DB.Save(&role).Error
+}
+
+func (r roleRepository) Delete(role *model.Role) error {
+	return r.DB.Delete(&role).Error
+}
+
+func (r roleRepository) Update(role *model.Role) error {
+	return r.DB.Model(&role).Where("id = ?", role.ID).Update("name", role.Name).Error
 }
 
 func (r roleRepository) All() []*model.Role {

@@ -1,43 +1,32 @@
 package model
 
-import (
-	"fmt"
-	"gorm.io/gorm"
-)
+// TODO(wil) Refactor Permission/Other inside UserPermission and RolePermission and refactor functions that use these
+//           structs.
 
-const (
-	MinMethodLength = 1
-	MaxMethodLength = 1000
-)
+// TODO(wil) Refactor `Other` to `Global` for readability and conveying meaning?
 
-type Permission struct {
-	gorm.Model
+// UserPermission Database model for customized user and permissions join table
+type UserPermission struct {
+	// User The User to grant the permission to
+	UserID uint `gorm:"primaryKey" json:"user_id"`
 
-	// The gRPC method name the permission belongs to
-	Method string `gorm:"not null" json:"name"`
+	// Permission The permission that is assigned to the user
+	Permission string `gorm:"primaryKey" json:"permission"`
 
 	// Whether the permission applies to users besides itself. If true, then the permission applies even if
 	// the target of the method is not itself
 	Other bool `gorm:"not null" json:"other"`
 }
 
-func (r *Permission) Validate() error {
-	err := r.validateMethod()
-	if err != nil {
-		return err
-	}
+// RolePermission Database model for customized role and permissions join table
+type RolePermission struct {
+	// Role The Role to grant the permission to
+	RoleID uint `gorm:"primaryKey" json:"role_id"`
 
-	return nil
-}
+	// Permission The permission that is assigned to the user
+	Permission string `gorm:"primaryKey" json:"permission"`
 
-func (r *Permission) validateMethod() error {
-	if len(r.Method) < MinMethodLength {
-		return fmt.Errorf("minimum method length is %d", MinMethodLength)
-	}
-
-	if len(r.Method) > MaxMethodLength {
-		return fmt.Errorf("maximum method length is %d", MaxMethodLength)
-	}
-
-	return nil
+	// Whether the permission applies to users besides itself. If true, then the permission applies even if
+	// the target of the method is not itself
+	Other bool `gorm:"not null" json:"other"`
 }

@@ -6,9 +6,9 @@ import "google/api/annotations.proto";
 import "google/protobuf/empty.proto";
 
 service AuthorizationService {
-  rpc GetAuthorization(GetAuthorizationRequest) returns (AuthorizationMessage) {
+  rpc GetAuthorization(IDMessage) returns (AuthorizationMessage) {
     option (google.api.http) = {
-      get: "/v1/users/{user_id}/authorization"
+      get: "/v1/users/{id}/authorization"
     };
   }
 
@@ -32,6 +32,12 @@ service AuthorizationService {
     };
   }
 
+  rpc GetRole(IDMessage) returns (UserRole) {
+    option (google.api.http) = {
+      get: "/v1/authorization/roles/{id}"
+    };
+  }
+
   rpc CreateRole(UserRole) returns (google.protobuf.Empty) {
     option (google.api.http) = {
       post: "/v1/authorization/roles"
@@ -52,47 +58,29 @@ service AuthorizationService {
     };
   }
 
-  rpc GetPermissions(google.protobuf.Empty) returns (UserPermissions) {
+  rpc GetAllPermissions(google.protobuf.Empty) returns (UserPermissions) {
     option (google.api.http) = {
-      get: "/v1/authorization/permission"
-    };
-  }
-
-  rpc CreatePermission(UserPermission) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      post: "/v1/authorization/permissions"
-      body: "*"
-    };
-  }
-
-  rpc EditPermission(UserPermission) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      put: "/v1/authorization/permissions/{id}"
-      body: "*"
-    };
-  }
-
-  rpc DeletePermission(UserPermission) returns (google.protobuf.Empty) {
-    option (google.api.http) = {
-      delete: "/v1/authorization/permissions/{id}"
+      get: "/v1/authorization/permissions"
     };
   }
 }
 
-message GetAuthorizationRequest {
-  uint64 user_id = 1;
+message IDMessage {
+  uint64 id = 1;
+}
+
+message Permission {
+  // The gRPC method the permission is for
+  string permission = 1;
 }
 
 message UserPermission {
-  // Unique ID for the permission
-  uint64 id = 1;
-
   // The gRPC method the permission is for
-  string method = 2;
+  string permission = 1;
 
   // If true then the permission is allowed for other users and for itself. If false, then it is only allowed for
   // making calls to or for itself.
-  bool other = 3;
+  bool other = 2;
 }
 
 message UserPermissions {

@@ -3,7 +3,7 @@ module github.com/ShatteredRealms/Accounts
 go 1.17
 
 require (
-	github.com/ShatteredRealms/GoUtils v1.0.4
+	github.com/ShatteredRealms/GoUtils v1.2.0
 	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.10.3
 	github.com/onsi/ginkgo/v2 v2.1.4

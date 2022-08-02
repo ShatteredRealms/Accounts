@@ -35,8 +35,7 @@ message LoginResponse {
   string last_name = 5;
   string username = 6;
   string created_at = 7;
-  UserRoles roles = 8;
-  UserPermissions permissions = 9;
+  repeated UserRole roles = 8;
 }
 
 message RegisterAccountMessage {
